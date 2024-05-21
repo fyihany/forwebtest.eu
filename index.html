@@ -1,16 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Form</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <title>Document</title>
 </head>
+
 <body>
-    <form action="https://script.google.com/macros/s/AKfycbxkRDt0KL4b0_Fqt885bcjWQj8AFoRD-jVwdT1qecHeZMSzs4E1Dz00KgbjIpTg-Qg6/exec" method="POST" id="order-form">
-        <input type="email" name="email" id="email" required>
-        <button type="submit">Odeslat</button>
+    <div id="container">
+        <div id="steps-bar">
+            <div id="step1Btn" class="para-box">
+                <p>1</p>
+            </div>
+            <div id="step2Btn" class="para-box">
+                <p>2</p>
+            </div>
+            <div id="step3Btn" class="para-box">
+                <p>3</p>
+            </div>
+            <div id="slider"></div>
+        </div>
+        <form action="" id="form-domain">
+
+            <div id="step1" class="main-box">
+                <div id="step1-heading-box" class="heading-box">
+                    <h2>Vaše domény</h2>
+                </div>
+                <div id="info-first_step">
+                    <p class="info-dataplus">Vyberte domény, u kterých chcete nastavit DataPlus.<br>Na další krok se
+                        dostanete jen v případě, že je vybrána aspoň jedna doména.</p>
+                    <hr>
+                </div>
+                <div id="domain-container" class="chck-domain-box">
+                    <div id="first-domain-box" class="chck-domain-box">
+                        <input type="checkbox" name="" id="first-domain" />
+                        <label for="first-domain" class="">www.enii-nails.cz</label>
+                    </div>
+                    <div id="second-domain-box" class="chck-domain-box">
+                        <input type="checkbox" name="" id="second-domain" class="" />
+                        <label for="second-domain" class="">eshop.enii-nails.sk</label>
+                    </div>
+                    <div id="third-domain-box" class="chck-domain-box">
+                        <input type="checkbox" name="" id="third-domain" class="" />
+                        <label for="third-domain" class="">enii-nails.pl</label>
+                    </div>
+                </div>
+                <div id="next-btn-box">
+                    <input type="button" id="next-btn" value="Další" class="btn" />
+                </div>
+            </div>
+            <div id="step2" class=" main-box hidden">
+                <div id="step2-heading-box" class="heading-box">
+                    <h2>Kontrola domén</h2>
+                </div>
+                <div id="info-dns-box">
+                    <p class="dns-info">Pro nastavení DataPlus je potřeba u těchto domén vytvořit DNS A záznam a AAAA
+                        záznam.<br>Pro více informací o nastavení DNS u různých poskytovatelů navštivte <a
+                            href="https://www.advisio.cz/blog/navod-na-upravu-dns/" target="_blank" id="advisio-link">[
+                            Advisio – Blog
+                            ]</a></p>
+                    <p class="go-back hidden">Vraťte se na krok 1 a zvolte jen ty domény, u kterých máte správně nastaveny DNS záznamy.</p>
+                    <p class="send-verified-text hidden">Vybrané domény mají správně nastaveny DNS záznamy. Pokračujte tlačítkem \"ODESLAT\".</p>
+                    <hr>
+                    <p class="dns-records">A – 89.221.217.63<br>AAAA – 2a02:2b88:2:63f::1</p>
+                    <hr>
+                </div>
+                <div id="new-domains-box"></div>
+                <div id="btn-box">
+                    <input type="button" id="send-btn" value="Ověřit" class="btn">
+                    <input type="button" id="send-granted-btn" value="Odeslat" class="btn hidden">
+                </div>
+            </div>
+            <div id="step3" class="main-box hidden">
+                <div id="step3-heading-box" class="heading-box">
+                    <h2>Děkujeme za ověření!</h2>
+                </div>
+                <!-- <div id="new-mail-box">
+                    <p>Pokud chcete přidat práva k novým GA4 pro další e-mail, pošlete ho zde.</p>
+                    <input type="email" name="new-mail" id="new-mail" required>
+                    <input type="button" id="new-mail-btn" value="Odeslat e-mail" class="btn">
+                </div> -->
+            </div>
+            <div id="contact">
+                <p>Technická podpora: <a id="tel" href="tel:+420730670687">+420 730 670 687</a></p>
+                <p>(Po-Pá 9:00-15:00)</p>
+            </div>
+
+    </div>
     </form>
 
-    <script src="./script.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>

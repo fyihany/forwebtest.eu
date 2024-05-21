@@ -1,0 +1,289 @@
+:root {
+    --background-color: #F9FAFB;
+    --bar-color: #FBF0D0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Roboto", sans-serif;
+    z-index: 1;
+}
+
+body {
+    background-color: var(--background-color);
+}
+
+/* Styly pro container */
+#container {
+    position: relative;
+    min-height: 100dvh;
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+/* Styly pro lištu kroků */
+#steps-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: relative;
+    background-color: var(--bar-color);
+    width: 90vw;
+    height: 3rem;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+}
+
+.para-box {
+    width: 30vw;
+    height: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    z-index: 1;
+}
+
+#slider {
+    content: "";
+    width: 30vw;
+    height: 3rem;
+    border: 2px solid #f78d15;
+    border-radius: 5px;
+    position: absolute;
+    left: 0;
+    transition: all 250ms linear;
+}
+
+/* Styly pro nadpisy */
+.heading-box {
+    letter-spacing: 2px;
+    font-size: 1.5rem;
+}
+
+/* Styly pro info*/
+#info-first_step {
+    text-align: center;
+}
+
+.info-dataplus {
+    padding-bottom: 1rem;
+}
+
+#info-dns-box {
+    text-align: center;
+    padding-inline: 1rem;
+}
+
+.dns-info, .go-back, .send-verified-text {
+    margin-block: 1rem;
+}
+
+.dns-records {
+    font-size: 1.5rem;
+    line-height: 2.5rem;
+    text-align: left;
+}
+
+#advisio-link {
+    text-decoration: none;
+    font-family: "Noto Serif", serif;
+    font-weight: 700;
+    font-style: italic;
+    color: #E7302A;
+}
+
+/* Styly pro box s doménami */
+.main-box {
+    height: 15rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+}
+
+.chck-domain-box {
+    display: flex;
+    flex-direction: row;
+}
+
+input[type="checkbox"],
+label {
+    cursor: pointer;
+}
+
+#domain-container,
+#new-domains-box {
+    font-size: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.denied {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.denied::before {
+    content: "";
+    display: block;
+    width: 30px;
+    height: 30px;
+    background-image: url(./svg/xmark-solid.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.granted {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.granted::before {
+    content: "";
+    display: block;
+    width: 30px;
+    height: 30px;
+    background-image: url(./svg/check-green.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+/* Styly pro checkboxy */
+input[type="checkbox"] {
+    margin-right: 1rem;
+    appearance: none;
+    height: 30px;
+    width: 30px;
+    background-color: #e1e8ea;
+    border: 1px solid #a6a6a6;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 250ms linear;
+}
+
+input[type="checkbox"]:checked {
+    content: url(./svg/check-solid.svg);
+    padding: 5px;
+}
+
+.verified-chckbox {
+    content: url(./svg/check-solid.svg);
+    padding: 5px;
+    background-color: #499649 !important;
+    cursor: not-allowed !important;
+}
+
+.verified-label {
+    cursor: not-allowed;
+    color: #a6a6a6;
+}
+
+/* Styly pro nový mail */
+#new-mail-box {
+    margin-top: 10rem;
+    min-height: 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.2rem;
+
+}
+
+input[type="email"] {
+    padding: 0.5rem;
+    outline: none;
+    border: 2px solid #f78d15;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* Styly pro tlačítka */
+.btn {
+    cursor: pointer;
+    background: #f78d15 linear-gradient(210deg, #f3c22b, #f78d15);
+    color: #fff;
+    padding: 1em 3em;
+    margin-top: 2rem;
+    font-size: 1em;
+    font-weight: 900;
+    font-style: normal;
+    max-width: 10rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    border-width: 0;
+    border-radius: 100vh;
+    justify-content: center;
+    vertical-align: middle;
+    outline: 0 !important;
+    box-shadow: 0 0.6rem 1.133rem 0 rgba(0, 0, 0, 0.2),
+        0 0.4rem 2.333rem 0 rgba(0, 0, 0, 0.15);
+    transition: all 250ms linear;
+}
+
+.btn:hover {
+    background: #fba23c;
+    box-shadow: 0 0.625rem 1.25rem rgba(0, 0, 0, 0.1),
+        0 1.25rem 3.75rem rgba(0, 0, 0, 0.1);
+}
+
+/* Styly pro kontakt */
+#contact {
+    text-align: center;
+    margin-top: 15rem;
+}
+
+#tel {
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1em;
+    color: #000;
+}
+
+/* Styly pro skrytí elementu */
+.hidden {
+    display: none;
+    z-index: -1;
+}
+
+/* Styly pro tlačítko během ověřování */
+.checking-btn {
+    cursor: progress;
+    background: #a6a6a6 !important;
+    color: #fff;
+    padding: 1em 3em;
+    margin-top: 2rem;
+    font-size: 1em;
+    font-weight: 900;
+    font-style: normal;
+    max-width: 10rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    border-width: 0;
+    border-radius: 100vh;
+    justify-content: center;
+    vertical-align: middle;
+    outline: 0 !important;
+    box-shadow: 0 0.6rem 1.133rem 0 rgba(0, 0, 0, 0.2),
+        0 0.4rem 2.333rem 0 rgba(0, 0, 0, 0.15);
+    transition: all 250ms linear;
+}
+  
