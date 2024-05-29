@@ -15,8 +15,153 @@ body {
     background-color: var(--background-color);
 }
 
-/* Styly pro container */
 #container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+/* Styly pro menu */
+#menu-container{
+    box-shadow: 0 0 20px 15px #838383;
+    background-color: #0C2738;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    flex: 1;
+    z-index: 10;
+}
+
+.menu-list {
+    list-style-type: none;
+    display: flex;
+    position: fixed;
+    left: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    font-weight: 600;
+    color: #fff;
+    
+}
+
+#dp-logo-box {
+    margin-bottom: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.menu-item-box {
+    cursor: pointer;
+    height: auto;
+    width: 100%;
+    display: flex;
+    justify-content:  left;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    transition: all 250ms linear;
+}
+
+.menu-item-box:hover {
+    border: 1px solid white;
+}
+
+.menu-item {
+    width: auto;
+    cursor: pointer;
+}
+
+/* Styly pro graf a tabulku */
+
+#for-user {
+    flex: 10;
+    position: relative;
+    min-height: 100dvh;
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+#graf-container {
+    position: relative;
+    min-height: 100dvh;
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+.chartjs-canvas {
+    cursor: crosshair;
+}
+
+/* Styly pro Tabulator tabulku */
+.date-box {
+    margin-block: 3rem;
+    display: flex;
+    gap: 10rem;
+}
+
+#example-table {
+    width: 70rem;
+    margin-top: 3rem;
+}
+
+#example-table .tabulator {
+    background-color: var(--background-color);
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  #example-table .tabulator-header {
+    background-color: #0C2738;
+    color: white;
+  }
+  
+  #example-table .tabulator-header .tabulator-col {
+    padding: 10px;
+    border-right: 1px solid #ddd;
+    background-color: #0AB0A4;
+  }
+  
+  #example-table .tabulator-header .tabulator-col:last-child {
+    border-right: none;
+  }
+  
+  #example-table .tabulator-row {
+    border-bottom: 1px solid #ddd;
+  }
+  
+  #example-table .tabulator-row:nth-child(even) {
+    background-color: var(--bar-color);
+  }
+  
+  #example-table .tabulator-cell {
+    padding: 10px;
+    border-right: 1px solid #ddd;
+  }
+  
+  #example-table .tabulator-cell:last-child {
+    border-right: none;
+  }
+  
+  #example-table .tabulator-row:hover {
+    background-color: #f1f1f1;
+  }
+  
+
+/* Styly pro container */
+#main-container {
     position: relative;
     min-height: 100dvh;
     background-color: var(--background-color);
@@ -33,7 +178,7 @@ body {
     align-items: center;
     position: relative;
     background-color: var(--bar-color);
-    width: 90vw;
+    width: 60vw;
     height: 3rem;
     border-radius: 5px;
     font-weight: 600;
@@ -43,7 +188,7 @@ body {
 }
 
 .para-box {
-    width: 30vw;
+    width: 20vw;
     height: inherit;
     display: flex;
     justify-content: center;
@@ -54,7 +199,7 @@ body {
 
 #slider {
     content: "";
-    width: 30vw;
+    width: 20vw;
     height: 3rem;
     border: 2px solid #f78d15;
     border-radius: 5px;
@@ -161,6 +306,20 @@ label {
     background-position: center;
 }
 
+/* Styly pro setting container */
+#setting-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-inline: 10rem;
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+}
+
 
 /* Styly pro checkboxy */
 input[type="checkbox"] {
@@ -259,8 +418,12 @@ input[type="email"] {
 
 /* Styly pro skrytí elementu */
 .hidden {
-    display: none;
+    display: none !important;
     z-index: -1;
+}
+
+.active {
+    border: 1px solid white !important;
 }
 
 /* Styly pro tlačítko během ověřování */
@@ -287,3 +450,10 @@ input[type="email"] {
     transition: all 250ms linear;
 }
   
+/* Styly pro tabulku */
+.tabulator-cell {
+    cursor: default;
+  }
+  .clickable-cell {
+    cursor: pointer;
+  }

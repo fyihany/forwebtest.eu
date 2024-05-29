@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
@@ -20,86 +22,186 @@
 
 <body>
     <div id="container">
-        <div id="steps-bar">
-            <div id="step1Btn" class="para-box">
-                <p>1</p>
+        <div id="menu-container">
+            <div id="menu">
+                <ul class="menu-list">
+                    <div id="dp-logo-box">
+                        <a href="https://dataplus.advisio.cz/" target="_blank" class="dp-logo"><img
+                                src="./svg/Property 1=[DataPlus].svg" alt="dataplus-logo"></a>
+                    </div>
+                    <div id="graf-box" class="menu-item-box active">
+                        <img src="./svg/chart-line-solid.svg" class="graf-icon" alt="graf">
+                        <li class="menu-item">Graf</li>
+                    </div>
+                    <div id="configuration-box" class="menu-item-box">
+                        <img src="./svg/sliders-solid.svg" alt="configuration">
+                        <li class="menu-item">Konfigurace</li>
+                    </div>
+                    <div id="setting-box" class="menu-item-box">
+                        <img src="./svg/gears-solid.svg" alt="setting">
+                        <li class="menu-item">Nastavení</li>
+                    </div>
+                    <div id="help-box" class="menu-item-box">
+                        <img src="./svg/circle-question-regular.svg" alt="help">
+                        <li class="menu-item">Podpora</li>
+                    </div>
+                </ul>
             </div>
-            <div id="step2Btn" class="para-box">
-                <p>2</p>
-            </div>
-            <div id="step3Btn" class="para-box">
-                <p>3</p>
-            </div>
-            <div id="slider"></div>
         </div>
-        <form action="" id="form-domain">
+        <div id="for-user">
+            <div id="graf-container">
+                <div class="date-box">
+                    <button type="button" class="last-7 btn">posledních 7 dní</button>
+                    <button type="button" class="last-28 btn">posledních 28 dní</button>
+                </div>
+                <div id="graf-box">
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <canvas id="myChart" class="chartjs-canvas" width="800" height="400"></canvas>
+                    
+                </div>
+                <div id="example-table"></div>
+            </div>
+            <div id="configuration-container" class="hidden">
+                <div id="steps-bar">
+                    <div id="step1Btn" class="para-box">
+                        <p>1</p>
+                    </div>
+                    <div id="step2Btn" class="para-box">
+                        <p>2</p>
+                    </div>
+                    <div id="step3Btn" class="para-box">
+                        <p>3</p>
+                    </div>
+                    <div id="slider"></div>
+                </div>
+                <form action="" id="form-domain">
 
-            <div id="step1" class="main-box">
-                <div id="step1-heading-box" class="heading-box">
-                    <h2>Vaše domény</h2>
-                </div>
-                <div id="info-first_step">
-                    <p class="info-dataplus">Vyberte domény, u kterých chcete nastavit DataPlus.<br>Na další krok se
-                        dostanete jen v případě, že je vybrána aspoň jedna doména.</p>
-                    <hr>
-                </div>
-                <div id="domain-container" class="chck-domain-box">
-                    <div id="first-domain-box" class="chck-domain-box">
-                        <input type="checkbox" name="" id="first-domain" />
-                        <label for="first-domain" class="">www.enii-nails.cz</label>
+                    <div id="step1" class="main-box">
+                        <div id="step1-heading-box" class="heading-box">
+                            <h2>Vaše domény</h2>
+                        </div>
+                        <div id="info-first_step">
+                            <p class="info-dataplus">Vyberte domény, u kterých chcete nastavit DataPlus.<br>Na další
+                                krok se
+                                dostanete jen v případě, že je vybrána aspoň jedna doména.</p>
+                            <hr>
+                        </div>
+                        <div id="domain-container" class="chck-domain-box">
+                            <div id="first-domain-box" class="chck-domain-box">
+                                <input type="checkbox" name="" id="first-domain" />
+                                <label for="first-domain" class="">www.enii-nails.cz</label>
+                            </div>
+                            <div id="second-domain-box" class="chck-domain-box">
+                                <input type="checkbox" name="" id="second-domain" class="" />
+                                <label for="second-domain" class="">eshop.enii-nails.sk</label>
+                            </div>
+                            <div id="third-domain-box" class="chck-domain-box">
+                                <input type="checkbox" name="" id="third-domain" class="" />
+                                <label for="third-domain" class="">enii-nails.pl</label>
+                            </div>
+                        </div>
+                        <div id="next-btn-box">
+                            <input type="button" id="next-btn" value="Další" class="btn" />
+                        </div>
                     </div>
-                    <div id="second-domain-box" class="chck-domain-box">
-                        <input type="checkbox" name="" id="second-domain" class="" />
-                        <label for="second-domain" class="">eshop.enii-nails.sk</label>
+                    <div id="step2" class=" main-box hidden">
+                        <div id="step2-heading-box" class="heading-box">
+                            <h2>Kontrola domén</h2>
+                        </div>
+                        <div id="info-dns-box">
+                            <p class="dns-info">Pro nastavení DataPlus je potřeba u těchto domén vytvořit DNS A záznam a
+                                AAAA
+                                záznam.<br>Pro více informací o nastavení DNS u různých poskytovatelů navštivte <a
+                                    href="https://www.advisio.cz/blog/navod-na-upravu-dns/" target="_blank"
+                                    id="advisio-link">[
+                                    Advisio – Blog
+                                    ]</a></p>
+                            <p class="go-back hidden">Vraťte se na krok 1 a zvolte jen ty domény, u kterých máte správně
+                                nastaveny DNS záznamy.</p>
+                            <p class="send-verified-text hidden">Vybrané domény mají správně nastaveny DNS záznamy.
+                                Pokračujte
+                                tlačítkem "ODESLAT".</p>
+                            <hr>
+                            <p class="dns-records">A – 89.221.217.63<br>AAAA – 2a02:2b88:2:63f::1</p>
+                            <hr>
+                        </div>
+                        <div id="new-domains-box"></div>
+                        <div id="btn-box">
+                            <input type="button" id="send-btn" value="Ověřit" class="btn">
+                            <input type="button" id="send-granted-btn" value="Odeslat" class="btn hidden">
+                        </div>
                     </div>
-                    <div id="third-domain-box" class="chck-domain-box">
-                        <input type="checkbox" name="" id="third-domain" class="" />
-                        <label for="third-domain" class="">enii-nails.pl</label>
+                    <div id="step3" class="main-box hidden">
+                        <div id="step3-heading-box" class="heading-box">
+                            <h2>Děkujeme za ověření!</h2>
+                        </div>
+                        <!-- <div id="new-mail-box">
+                            <p>Pokud chcete přidat práva k novým GA4 pro další e-mail, pošlete ho zde.</p>
+                            <input type="email" name="new-mail" id="new-mail" required>
+                            <input type="button" id="new-mail-btn" value="Odeslat e-mail" class="btn">
+                        </div> -->
                     </div>
-                </div>
-                <div id="next-btn-box">
-                    <input type="button" id="next-btn" value="Další" class="btn" />
-                </div>
+                </form>
             </div>
-            <div id="step2" class=" main-box hidden">
-                <div id="step2-heading-box" class="heading-box">
-                    <h2>Kontrola domén</h2>
-                </div>
-                <div id="info-dns-box">
-                    <p class="dns-info">Pro nastavení DataPlus je potřeba u těchto domén vytvořit DNS A záznam a AAAA
-                        záznam.<br>Pro více informací o nastavení DNS u různých poskytovatelů navštivte <a
-                            href="https://www.advisio.cz/blog/navod-na-upravu-dns/" target="_blank" id="advisio-link">[
-                            Advisio – Blog
-                            ]</a></p>
-                    <p class="go-back hidden">Vraťte se na krok 1 a zvolte jen ty domény, u kterých máte správně nastaveny DNS záznamy.</p>
-                    <p class="send-verified-text hidden">Vybrané domény mají správně nastaveny DNS záznamy. Pokračujte tlačítkem \"ODESLAT\".</p>
-                    <hr>
-                    <p class="dns-records">A – 89.221.217.63<br>AAAA – 2a02:2b88:2:63f::1</p>
-                    <hr>
-                </div>
-                <div id="new-domains-box"></div>
-                <div id="btn-box">
-                    <input type="button" id="send-btn" value="Ověřit" class="btn">
-                    <input type="button" id="send-granted-btn" value="Odeslat" class="btn hidden">
-                </div>
-            </div>
-            <div id="step3" class="main-box hidden">
-                <div id="step3-heading-box" class="heading-box">
-                    <h2>Děkujeme za ověření!</h2>
-                </div>
-                <!-- <div id="new-mail-box">
-                    <p>Pokud chcete přidat práva k novým GA4 pro další e-mail, pošlete ho zde.</p>
-                    <input type="email" name="new-mail" id="new-mail" required>
-                    <input type="button" id="new-mail-btn" value="Odeslat e-mail" class="btn">
-                </div> -->
-            </div>
-            <div id="contact">
-                <p>Technická podpora: <a id="tel" href="tel:+420730670687">+420 730 670 687</a></p>
-                <p>(Po-Pá 9:00-15:00)</p>
-            </div>
+            <div id="setting-container" class="hidden">
+                <h1>Jak propojit Google Analytics 4 (GA4) s Google Ads</h1>
+                <p>Propojení Google Analytics 4 (GA4) s Google Ads vám umožní sledovat a analyzovat efektivitu vašich
+                    reklamních kampaní. Zde je jednoduchý návod, jak to udělat:</p>
 
+                <h2>Krok 1: Přihlaste se do Google Analytics</h2>
+                <ul>
+                    <li>Otevřete Google Analytics a přihlaste se do svého účtu.</li>
+                    <li>Vyberte službu (property), kterou chcete propojit s Google Ads.</li>
+                </ul>
+
+                <h2>Krok 2: Otevřete nastavení propojení Google Ads</h2>
+                <ul>
+                    <li>Klikněte na <strong>Správce</strong> (Admin) v levém dolním rohu.</li>
+                    <li>Ve sloupci <strong>Služba</strong> (Property) klikněte na <strong>Propojení s Google
+                            Ads</strong> (Google Ads Linking).</li>
+                </ul>
+
+                <h2>Krok 3: Vytvořte nové propojení</h2>
+                <ul>
+                    <li>Klikněte na tlačítko <strong>Propojit</strong> (Link).</li>
+                    <li>Klikněte na <strong>Vybrat účty Google Ads</strong> (Choose Google Ads accounts) a vyberte účty
+                        Google Ads, které chcete propojit. Pokud se váš účet Google Ads nezobrazuje, ujistěte se, že
+                        máte potřebná oprávnění.</li>
+                    <li>Klikněte na <strong>Potvrdit</strong> (Confirm).</li>
+                    <li>Klikněte na <strong>Další</strong> (Next).</li>
+                </ul>
+
+                <h2>Krok 4: Nastavte automatické značkování (Auto-Tagging)</h2>
+                <ul>
+                    <li>Možnost <strong>Povolit personalizovanou reklamu</strong> (Enable Personalized Advertising) je
+                        ve výchozím nastavení zapnutá.</li>
+                    <li>Rozbalte možnost <strong>Povolit automatické značkování</strong> (Enable Auto-Tagging) a
+                        nastavte automatické značkování podle svých potřeb. Pokud povolíte automatické značkování při
+                        propojení s účtem správce, bude automatické značkování povoleno pro všechny účty Google Ads
+                        přímo propojené s účtem správce.</li>
+                    <li>Klikněte na <strong>Další</strong> (Next) a zkontrolujte své nastavení.</li>
+                </ul>
+
+                <h2>Krok 5: Dokončení propojení</h2>
+                <ul>
+                    <li>Klikněte na <strong>Odeslat</strong> (Submit) pro propojení účtů s aktuálním nastavením.</li>
+                </ul>
+
+                <h2>Hotovo!</h2>
+                <p>Nyní jste úspěšně propojili svůj účet Google Analytics 4 s Google Ads. Můžete začít sledovat výkon
+                    vašich reklamních kampaní a analyzovat data pro lepší rozhodování a optimalizaci marketingových
+                    aktivit.</p>
+            </div>
+            <div id="help-container" class="hidden">
+                <div id="contact">
+                    <p>Technická podpora: <a id="tel" href="tel:+420730670687">+420 730 670 687</a></p>
+                    <p>(Po-Pá 9:00-15:00)</p>
+                </div>
+            </div>
+        </div>
     </div>
-    </form>
+
+
 
     <script src="script.js"></script>
 </body>
