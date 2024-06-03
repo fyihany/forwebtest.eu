@@ -13,6 +13,7 @@
 
 body {
     background-color: var(--background-color);
+   
 }
 
 /* Kontejner */
@@ -89,6 +90,7 @@ body {
     flex-direction: column;
     justify-content: start;
     align-items: center;
+   
 }
 
 /* Kontejner grafu */
@@ -341,6 +343,12 @@ label {
     font-size: 20px;
 }
 
+.dp-image {
+    width: 17%;
+    margin-top: 4rem;
+    opacity: .8;
+}
+
 /* Kontejner nastavení */
 #setting-container {
     display: flex;
@@ -361,6 +369,12 @@ label {
 
 .setting-info {
     margin-block: 3rem;
+}
+
+.setting-image {
+    margin-top: 3rem;
+    width: 20%;
+    opacity: .8;
 }
 
 /* Styl pro seznamy */
@@ -575,11 +589,28 @@ input[type="email"] {
 /* Missing Data */
 .missing-data {
     position: absolute;
-    top: 30%;
+    top: 10%;
     font-size: 20px;
-    text-align: center;
+    text-align: justify;
+    z-index: 100;
+}
+
+.missing-data p {
+    margin-bottom: 10px;
 }
 
 .missing-data h1 {
     margin-bottom: 3rem;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.missing-data img {
+    width: 40%;
+    opacity: .75;
+}
+
+.image-box {
+    display: flex;
+    justify-content: center;
 }

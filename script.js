@@ -45,7 +45,7 @@ let grantedDomains = [];
 let receivedObject = {};
 const URL_verified = "https://app.advisio.cz/dataplus/check_dns_domain/";
 const URL_granted = "https://app.advisio.cz/dataplus/allow_domain/";
-const property_id = "441540701";
+const property_id = "434148014";
 
 // Funkce
 
