@@ -571,3 +571,15 @@ input[type="email"] {
         opacity: 0.5;
     }
 }
+
+/* Missing Data */
+.missing-data {
+    position: absolute;
+    top: 30%;
+    font-size: 20px;
+    text-align: center;
+}
+
+.missing-data h1 {
+    margin-bottom: 3rem;
+}

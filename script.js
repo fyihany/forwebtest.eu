@@ -32,6 +32,9 @@ const last7Btn = document.querySelector(".last-7");
 const last28Btn = document.querySelector(".last-28");
 const graf = document.querySelector("#graf-wrappper");
 const table = document.querySelector("#example-table");
+const missingData = document.querySelector(".missing-data")
+const dateBox = document.querySelector(".date-box")
+const grafWrapper = document.querySelector("#graf-wrapper")
 
 let stepChecker = 1;
 let isAllGranted = false;
@@ -42,7 +45,7 @@ let grantedDomains = [];
 let receivedObject = {};
 const URL_verified = "https://app.advisio.cz/dataplus/check_dns_domain/";
 const URL_granted = "https://app.advisio.cz/dataplus/allow_domain/";
-const property_id = "434148014";
+const property_id = "441540701";
 
 // Funkce
 
@@ -494,59 +497,74 @@ function getGrafData(startDate, endDate) {
         body: JSON.stringify({
             start_date: startDate,
             end_date: endDate,
-            property_id: '434148014',
+            property_id: property_id,
         }),
         credentials: 'include'
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        let rows = data.reports[0].rows;
-    
-        rows.forEach(row => {
-            let date = row.dimensionValues[0].value;
-            let value = Number(row.metricValues[3].value);
-    
-            let grafObj = {
-                date,
-                value
-            };
-    
-            let existingItem = grafData.find(item => item.date === grafObj.date);
-    
-            if (existingItem) {
-                existingItem.value += grafObj.value;
-            } else {
-                grafData.push(grafObj);
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
             }
+            return response.json();
+        })
+        .then(data => {
+            if (data.reports[0].rows) {
+                let rows = data.reports[0].rows;
+
+                rows.forEach(row => {
+                    let date = row.dimensionValues[0].value;
+                    let value = Number(row.metricValues[3].value);
+
+                    let grafObj = {
+                        date,
+                        value
+                    };
+
+                    let existingItem = grafData.find(item => item.date === grafObj.date);
+
+                    if (existingItem) {
+                        existingItem.value += grafObj.value;
+                    } else {
+                        grafData.push(grafObj);
+                    }
+                });
+
+                // Seřazení grafData podle datumu sestupně po zpracování všech řádků
+                grafData.sort((a, b) => {
+                    let dateA = new Date(a.date.slice(0, 4), a.date.slice(4, 6) - 1, a.date.slice(6, 8));
+                    let dateB = new Date(b.date.slice(0, 4), b.date.slice(4, 6) - 1, b.date.slice(6, 8));
+                    return dateB - dateA;
+                });
+
+                // Aktualizace grafLabels podle seřazených dat
+                grafLabels = grafData.map(item => {
+                    const date = new Date(item.date.slice(0, 4), item.date.slice(4, 6) - 1, item.date.slice(6, 8));
+                    return `${date.getDate()}.${date.getMonth() + 1}.`;
+                });
+
+                // Aktualizace grafu po získání dat
+                table.classList.remove("hidden");
+                graf.style.opacity = "1";
+                barChart.classList.add("hidden");
+                setGraf();
+            } else {
+                console.log("Chybí graf data")
+
+                dateBox.classList.add("hidden")
+                table.classList.add("hidden");
+                graf.style.opacity = "0";
+                barChart.classList.add("hidden");
+
+                if (barChart.classList.contains("hidden")) {
+                    missingData.classList.remove("hidden")
+                
+                }
+            }
+
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
-    
-        // Seřazení grafData podle datumu sestupně po zpracování všech řádků
-        grafData.sort((a, b) => {
-            let dateA = new Date(a.date.slice(0, 4), a.date.slice(4, 6) - 1, a.date.slice(6, 8));
-            let dateB = new Date(b.date.slice(0, 4), b.date.slice(4, 6) - 1, b.date.slice(6, 8));
-            return dateB - dateA;
-        });
-        
-        // Aktualizace grafLabels podle seřazených dat
-        grafLabels = grafData.map(item => {
-            const date = new Date(item.date.slice(0, 4), item.date.slice(4, 6) - 1, item.date.slice(6, 8));
-            return `${date.getDate()}.${date.getMonth() + 1}.`;
-        });
-        
-        // Aktualizace grafu po získání dat
-        table.classList.remove("hidden");
-    graf.style.opacity = "1";
-    barChart.classList.add("hidden");
-        setGraf();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
 }
 
 /**
@@ -575,22 +593,36 @@ async function getTableData(startDate, endDate) {
         }
 
         const data = await response.json();
-        let rows = data.reports[0].rows;
-        currency = data.reports[0].metadata.currencyCode;
 
-        console.log(data)
-        fromGA4 = rows.map((row, index) => ({
-            sourceMedium: row.dimensionValues[1].value,
-            activeUsers: row.metricValues[0].value,
-            advertiserAdCost: row.metricValues[1].value,
-            transactions: row.metricValues[2].value,
-            purchaseRevenue: row.metricValues[3].value,
-            conversionRate: row.metricValues[0].value != 0 ? (row.metricValues[2].value / row.metricValues[0].value) * 100 : 0,
-            pno: row.metricValues[3].value != 0 ? (row.metricValues[1].value / row.metricValues[3].value) * 100 : 0
-        }));
+        if (data.reports[0].rows) {
+            let rows = data.reports[0].rows;
+            currency = data.reports[0].metadata.currencyCode;
 
-        fromGA4.sort((a, b) => parseFloat(b.purchaseRevenue) - parseFloat(a.purchaseRevenue));
-        console.log(fromGA4)
+            fromGA4 = rows.map((row, index) => ({
+                sourceMedium: row.dimensionValues[1].value,
+                activeUsers: row.metricValues[0].value,
+                advertiserAdCost: row.metricValues[1].value,
+                transactions: row.metricValues[2].value,
+                purchaseRevenue: row.metricValues[3].value,
+                conversionRate: row.metricValues[0].value != 0 ? (row.metricValues[2].value / row.metricValues[0].value) * 100 : 0,
+                pno: row.metricValues[3].value != 0 ? (row.metricValues[1].value / row.metricValues[3].value) * 100 : 0
+            }));
+
+            fromGA4.sort((a, b) => parseFloat(b.purchaseRevenue) - parseFloat(a.purchaseRevenue));
+        } else {
+            console.log("Chybí table data")
+
+            dateBox.classList.add("hidden")
+            table.classList.add("hidden");
+            graf.style.opacity = "0";
+            barChart.classList.add("hidden");
+
+            // if (barChart.classList.contains("hidden")) {
+            //     missingData.classList.remove("hidden")
+            // }
+
+        }
+
     } catch (error) {
         console.error('Error:', error);
     }
@@ -604,9 +636,6 @@ async function getTableData(startDate, endDate) {
 function setGraf() {
     grafData.reverse()
     grafLabels.reverse()
-
-    console.log(grafData);
-    console.log(grafLabels);
 
     last28Btn.classList.remove("checking-btn");
     last7Btn.classList.remove("checking-btn");
@@ -799,13 +828,13 @@ function setTable() {
                 }
             },
             { title: "Konverze", field: "transactions", hozAlign: "right", headerWordWrap: true, formatter: numberFormatter, bottomCalc: "sum", bottomCalcFormatter: numberFormatter },
-            { 
-                title: "Hodnota konverze", 
-                field: "purchaseRevenue", 
-                hozAlign: "right", 
-                headerWordWrap: true, 
-                formatter: currencyFormatter, 
-                bottomCalc: "sum", 
+            {
+                title: "Hodnota konverze",
+                field: "purchaseRevenue",
+                hozAlign: "right",
+                headerWordWrap: true,
+                formatter: currencyFormatter,
+                bottomCalc: "sum",
                 bottomCalcFormatter: currencyFormatter,
                 sorter: "number" // Řazení podle číselné hodnoty
             },
@@ -822,6 +851,7 @@ function setTable() {
  * @returns {Promise<void>} Vrací Promise.
  */
 async function updateData(numOfDays) {
+    missingData.classList.add("hidden")
     grafLabels = [];
     grafData = [];
     let dateRange = getDate(numOfDays);
