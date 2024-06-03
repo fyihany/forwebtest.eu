@@ -24,6 +24,7 @@ const grafBox = document.querySelector("#graf-box")
 const configurationBox = document.querySelector("#configuration-box")
 const settingBox = document.querySelector("#setting-box")
 const helpBox = document.querySelector("#help-box")
+const contact = document.querySelector("#contact")
 
 
 let stepChecker = 1
@@ -33,12 +34,11 @@ let domainsToControl = []
 let verifiedDomains = []
 let grantedDomains = []
 let receivedObject = {}
-let URL_verified = "http://localhost:8080/verify-domain"
-let URL_granted = "http://localhost:8080/granted-domain"
+let URL_verified = "https://app.advisio.cz/dataplus/check_dns_domain/"
+let URL_granted = "https://app.advisio.cz/dataplus/allow_domain/"
+let property_id = "434148014"
 
 // Funkce
-
-
 
 /**
  * Změní viditelnost kroků v uživatelském rozhraní, zobrazí zvolený krok a skryje ostatní.
@@ -167,27 +167,6 @@ function backToFirst(clickedBtn, parent) {
     })
 }
 
-async function checkDnsDomain(domains) {
-    const url = 'https://app.advisio.cz/dataplus/check_dns_domain/';
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(domains),
-        credentials: 'include'  // Include cookies if CORS_ALLOW_CREDENTIALS is true
-    });
-
-    if (response.ok) {
-        const jsonResponse = await response.json();
-        console.log('Response:', jsonResponse);
-    } else {
-        console.error('Error:', response.statusText);
-    }
-}
-
-
 /**
  * Odešle požadavky na ověření domén pomocí HTTP POST a aktualizuje uživatelské rozhraní na základě výsledků.
  * @param {HTMLButtonElement} clickedBtn - Tlačítko, které zahajuje proces ověření domén.
@@ -206,7 +185,6 @@ function sendForCheck(clickedBtn) {
         //     return domainNewSub
         // })
 
-        checkDnsDomain(splitDomains)
 
         fetch(URL_verified, {
             method: "POST",
@@ -453,10 +431,13 @@ settingBox.addEventListener("click", () => {
     addActive(settingBox, grafBox, configurationBox, helpBox)
 })
 
-helpBox.addEventListener("click", () => {
-    hideStep(helpContainer, grafContainer, confugirationContainer, settingContainer)
-    addActive(helpBox, grafBox, configurationBox, settingBox)
-})
+// helpBox.addEventListener("click", () => {
+//     hideStep(helpContainer, grafContainer, confugirationContainer, settingContainer)
+//     addActive(helpBox, grafBox, configurationBox, settingBox)
+// })
+
+
+
 
 
 
@@ -470,6 +451,7 @@ helpBox.addEventListener("click", () => {
 // Graf a tabulka
 const last7Btn = document.querySelector(".last-7");
 const last28Btn = document.querySelector(".last-28");
+const loading = document.querySelector("#loading")
 
 let fromGA4 = [];
 let grafLabels = [];
@@ -530,7 +512,7 @@ async function getGrafData(numOfDays) {
             body: JSON.stringify({
                 start_date: formattedDate,
                 end_date: formattedDate,
-                property_id: '434148014',
+                property_id: property_id,
             }),
             credentials: 'include'
         })
@@ -541,6 +523,7 @@ async function getGrafData(numOfDays) {
                 return response.json();
             })
             .then(data => {
+
                 let rows = data.reports[0].rows;
                 let value = 0;
                 rows.forEach(row => {
@@ -549,6 +532,8 @@ async function getGrafData(numOfDays) {
                 return value;
             })
             .catch(error => {
+                loading.textContent = "Došlo k chybě při načítání dat!"
+
                 console.error('Error:', error);
                 return 0;  // In case of error, we push 0 to maintain the order
             });
@@ -571,7 +556,7 @@ async function getTableData(startDate, endDate) {
             body: JSON.stringify({
                 start_date: startDate,
                 end_date: endDate,
-                property_id: '434148014',
+                property_id: property_id,
             }),
             credentials: 'include'
         });
@@ -654,6 +639,8 @@ function setGraf() {
             }
         }
     });
+    loading.style.display = "none"
+
 }
 
 function currencyFormatter(cell, formatterParams, onRendered) {
@@ -692,7 +679,7 @@ function customFormatter(cell, formatterParams, onRendered) {
     let sourceMedium = row.getData().sourceMedium;
 
     // Nastavení stylu na základě hodnoty sourceMedium a hodnoty buňky
-    if (sourceMedium === 'google / cpc' && value > 0) {
+    if (sourceMedium === 'google / cpc' && value == 0) {
         cell.getElement().style.color = 'red';
         cell.getElement().style.fontWeight = 'bold';
         cell.getElement().style.textDecoration = 'underline';
@@ -760,7 +747,7 @@ function setTable() {
                 cellClick: function (e, cell) {
                     let row = cell.getRow();
                     let sourceMedium = row.getData().sourceMedium;
-                    if (sourceMedium === 'google / cpc' && cell.getValue() !== 0) {
+                    if (sourceMedium === 'google / cpc' && cell.getValue() == 0) {
                         hideStep(settingContainer, grafContainer, confugirationContainer, helpContainer)
                         addActive(settingBox, grafBox, configurationBox, helpBox)
                     }
@@ -809,17 +796,25 @@ async function updateData(numOfDays) {
 }
 
 last7Btn.addEventListener("click", () => {
+    loading.style.display = "block"
+
+
     last7Btn.classList.add("checking-btn");
     last7Btn.setAttribute("disabled", "disabled");
     updateData(7);
 });
 
 last28Btn.addEventListener("click", () => {
+    loading.style.display = "block"
+
+
     last28Btn.classList.add("checking-btn");
     last28Btn.setAttribute("disabled", "disabled");
     updateData(28);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+    loading.style.display = "block"
+
     updateData(7);
 });

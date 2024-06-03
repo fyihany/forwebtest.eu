@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 
 <head>
     <meta charset="UTF-8" />
@@ -41,11 +41,15 @@
                         <img src="./svg/gears-solid.svg" alt="setting">
                         <li class="menu-item">Nastavení</li>
                     </div>
-                    <div id="help-box" class="menu-item-box">
+                    <!-- <div id="help-box" class="menu-item-box">
                         <img src="./svg/circle-question-regular.svg" alt="help">
                         <li class="menu-item">Podpora</li>
-                    </div>
+                    </div> -->
                 </ul>
+                <div id="contact">
+                    <p>Technická&nbsp;podpora:<br><a id="tel" href="tel:+420730670687">+420&nbsp;730&nbsp;670&nbsp;687</a></p>
+                    <p>(Po-Pá&nbsp;9:00-15:00)</p>
+                </div>
             </div>
         </div>
         <div id="for-user">
@@ -54,10 +58,11 @@
                     <button type="button" class="last-7 btn">posledních 7 dní</button>
                     <button type="button" class="last-28 btn">posledních 28 dní</button>
                 </div>
+                <div id="loading" style="display: none;">Čekám na data...</div>
                 <div id="graf-box">
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                     <canvas id="myChart" class="chartjs-canvas" width="800" height="400"></canvas>
-                    
+
                 </div>
                 <div id="example-table"></div>
             </div>
@@ -97,7 +102,7 @@
                             </div>
                             <div id="third-domain-box" class="chck-domain-box">
                                 <input type="checkbox" name="" id="third-domain" class="" />
-                                <label for="third-domain" class="">enii-nails.pl</label>
+                                <label for="third-domain" class="">www.imago.cz</label>
                             </div>
                         </div>
                         <div id="next-btn-box">
@@ -144,60 +149,40 @@
                 </form>
             </div>
             <div id="setting-container" class="hidden">
-                <h1>Jak propojit Google Analytics 4 (GA4) s Google Ads</h1>
-                <p>Propojení Google Analytics 4 (GA4) s Google Ads vám umožní sledovat a analyzovat efektivitu vašich
-                    reklamních kampaní. Zde je jednoduchý návod, jak to udělat:</p>
 
-                <h2>Krok 1: Přihlaste se do Google Analytics</h2>
-                <ul>
-                    <li>Otevřete Google Analytics a přihlaste se do svého účtu.</li>
-                    <li>Vyberte službu (property), kterou chcete propojit s Google Ads.</li>
-                </ul>
+                <h1>Jak nastavit propojení s Google Ads</h1>
+                <h3 class="setting-info">Aby bylo možné propojit GA4 s Google Ads, musíte být přihlášeni k Google účtu,
+                    který má přístup jak
+                    do GA4, tak do Google Ads.</h3>
 
-                <h2>Krok 2: Otevřete nastavení propojení Google Ads</h2>
-                <ul>
-                    <li>Klikněte na <strong>Správce</strong> (Admin) v levém dolním rohu.</li>
-                    <li>Ve sloupci <strong>Služba</strong> (Property) klikněte na <strong>Propojení s Google
-                            Ads</strong> (Google Ads Linking).</li>
-                </ul>
-
-                <h2>Krok 3: Vytvořte nové propojení</h2>
-                <ul>
-                    <li>Klikněte na tlačítko <strong>Propojit</strong> (Link).</li>
-                    <li>Klikněte na <strong>Vybrat účty Google Ads</strong> (Choose Google Ads accounts) a vyberte účty
-                        Google Ads, které chcete propojit. Pokud se váš účet Google Ads nezobrazuje, ujistěte se, že
-                        máte potřebná oprávnění.</li>
-                    <li>Klikněte na <strong>Potvrdit</strong> (Confirm).</li>
-                    <li>Klikněte na <strong>Další</strong> (Next).</li>
-                </ul>
-
-                <h2>Krok 4: Nastavte automatické značkování (Auto-Tagging)</h2>
-                <ul>
-                    <li>Možnost <strong>Povolit personalizovanou reklamu</strong> (Enable Personalized Advertising) je
-                        ve výchozím nastavení zapnutá.</li>
-                    <li>Rozbalte možnost <strong>Povolit automatické značkování</strong> (Enable Auto-Tagging) a
-                        nastavte automatické značkování podle svých potřeb. Pokud povolíte automatické značkování při
-                        propojení s účtem správce, bude automatické značkování povoleno pro všechny účty Google Ads
-                        přímo propojené s účtem správce.</li>
-                    <li>Klikněte na <strong>Další</strong> (Next) a zkontrolujte své nastavení.</li>
-                </ul>
-
-                <h2>Krok 5: Dokončení propojení</h2>
-                <ul>
-                    <li>Klikněte na <strong>Odeslat</strong> (Submit) pro propojení účtů s aktuálním nastavením.</li>
-                </ul>
-
-                <h2>Hotovo!</h2>
-                <p>Nyní jste úspěšně propojili svůj účet Google Analytics 4 s Google Ads. Můžete začít sledovat výkon
-                    vašich reklamních kampaní a analyzovat data pro lepší rozhodování a optimalizaci marketingových
-                    aktivit.</p>
+                <ol>
+                    <li>
+                        <p>Otevřete GA4, které chcete propojit. Vlevo dole klikněte na <strong>Administrátor</strong>.
+                        </p>
+                    </li>
+                    <li>
+                        <p>V menu najděte sekci <strong>Propojení služeb</strong> a poté vyberte <strong>Propojení
+                                Google Ads</strong>.</p>
+                    </li>
+                    <li>
+                        <p>Klikněte na tlačítko <strong>Propojit</strong> vpravo nahoře.</p>
+                    </li>
+                    <li>
+                        <p>Vyberte Google Ads účet, který chcete propojit. Valším nastavení nic neměňte a dejte
+                            dokončit.</p>
+                    </li>
+                    <li>
+                        <p>Pokud se vám nezobrazuje Váš Google Ads účet, zkontrolujte, že máte v GA4 i Google Ads
+                            dostatečná oprávnění.</p>
+                    </li>
+                </ol>
             </div>
-            <div id="help-container" class="hidden">
+            <!-- <div id="help-container" class="hidden">
                 <div id="contact">
                     <p>Technická podpora: <a id="tel" href="tel:+420730670687">+420 730 670 687</a></p>
                     <p>(Po-Pá 9:00-15:00)</p>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
