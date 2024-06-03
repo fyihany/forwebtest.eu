@@ -26,10 +26,15 @@
             <div id="menu">
                 <ul class="menu-list">
                     <div id="dp-logo-box">
-                        <a href="https://dataplus.advisio.cz/" target="_blank" class="dp-logo"><img
-                                src="./svg/Property 1=[DataPlus].svg" alt="dataplus-logo"></a>
+                        <a href="https://dataplus.advisio.cz/?utm_source=addon&utm_medium=upgates" target="_blank" class="dp-logo">
+                            <img src="./svg/Property 1=[DataPlus].svg" alt="dataplus-logo">
+                        </a>
                     </div>
-                    <div id="graf-box" class="menu-item-box active">
+                    <div id="home-box" class="menu-item-box active">
+                        <img src="./svg/house-solid.svg" class="home-icon" alt="home">
+                        <li class="menu-item">Úvod</li>
+                    </div>
+                    <div id="graf-box" class="menu-item-box">
                         <img src="./svg/chart-line-solid.svg" class="graf-icon" alt="graf">
                         <li class="menu-item">Graf</li>
                     </div>
@@ -47,19 +52,35 @@
                     </div> -->
                 </ul>
                 <div id="contact">
-                    <p>Technická&nbsp;podpora:<br><a id="tel" href="tel:+420730670687">+420&nbsp;730&nbsp;670&nbsp;687</a></p>
+                    <p>Technická&nbsp;podpora:<br><a id="tel"
+                            href="tel:+420730670687">+420&nbsp;730&nbsp;670&nbsp;687</a></p>
                     <p>(Po-Pá&nbsp;9:00-15:00)</p>
                 </div>
             </div>
         </div>
+
         <div id="for-user">
-            <div id="graf-container">
+            <div id="home-container">
+                <h1>Úspěšný byznys potřebuje přesná data</h1>
+                <p> Neztrácejte klíčová data, tržby ani své zákazníky. DataPlus přináší
+                    nejnovější technologii server-side tagging, díky které změříte až 99 % svých dat a získáte informace
+                    o úspěšnosti jednotlivých reklamních kanálů.<br> Nespoléhejte jen na svou intuici, rozhodujte se na
+                    základě kompletních dat. </p>
+            </div>
+            <div id="graf-container" class="hidden">
                 <div class="date-box">
                     <button type="button" class="last-7 btn">posledních 7 dní</button>
                     <button type="button" class="last-28 btn">posledních 28 dní</button>
                 </div>
-                <div id="loading" style="display: none;">Čekám na data...</div>
-                <div id="graf-box">
+                <!-- <div id="loading" style="display: none;">Čekám na data...</div> -->
+                <div>
+                    <svg class="bar-chart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                        <rect class="bar bar1" x="10" y="20" width="20" height="40" />
+                        <rect class="bar bar2" x="40" y="20" width="20" height="40" />
+                        <rect class="bar bar3" x="70" y="20" width="20" height="40" />
+                    </svg>
+                </div>
+                <div id="graf-wrappper">
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                     <canvas id="myChart" class="chartjs-canvas" width="800" height="400"></canvas>
 
