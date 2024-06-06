@@ -532,7 +532,7 @@ function getGrafData(startDate, endDate) {
                 // Seřazení grafData podle datumu sestupně po zpracování všech řádků
                 grafData.sort((a, b) => {
                     let dateA = new Date(a.date.slice(0, 4), a.date.slice(4, 6) - 1, a.date.slice(6, 8));
-                    let dateB = new Date(b.date.slice(0, 4), b.date.slice(4, 6) - 1, b.date.slice(6, 8));
+                    let dateB = new Date(b.date.slice(0, 4), b.date.slice(4, 6) - 1, a.date.slice(6, 8));
                     return dateB - dateA;
                 });
 
@@ -548,19 +548,17 @@ function getGrafData(startDate, endDate) {
                 barChart.classList.add("hidden");
                 setGraf();
             } else {
-                console.log("Chybí graf data")
+                console.log("Chybí graf data");
 
-                dateBox.classList.add("hidden")
+                dateBox.classList.add("hidden");
                 table.classList.add("hidden");
                 graf.style.opacity = "0";
                 barChart.classList.add("hidden");
 
                 if (barChart.classList.contains("hidden")) {
-                    missingData.classList.remove("hidden")
-                
+                    missingData.classList.remove("hidden");
                 }
             }
-
         })
         .catch(error => {
             console.error('Error:', error);
@@ -596,7 +594,7 @@ async function getTableData(startDate, endDate) {
 
         if (data.reports[0].rows) {
             let rows = data.reports[0].rows;
-            currency = data.reports[0].metadata.currencyCode;
+            currency = data.reports[0].metadata.currencyCode; // Aktualizace měny
 
             fromGA4 = rows.map((row, index) => ({
                 sourceMedium: row.dimensionValues[1].value,
@@ -610,23 +608,53 @@ async function getTableData(startDate, endDate) {
 
             fromGA4.sort((a, b) => parseFloat(b.purchaseRevenue) - parseFloat(a.purchaseRevenue));
         } else {
-            console.log("Chybí table data")
+            console.log("Chybí table data");
 
-            dateBox.classList.add("hidden")
+            dateBox.classList.add("hidden");
             table.classList.add("hidden");
             graf.style.opacity = "0";
             barChart.classList.add("hidden");
-
-            // if (barChart.classList.contains("hidden")) {
-            //     missingData.classList.remove("hidden")
-            // }
-
         }
 
     } catch (error) {
         console.error('Error:', error);
     }
+}
 
+/**
+ * Formátuje hodnotu buňky jako měnu.
+ * @param {Object} cell - Buňka Tabulatoru.
+ * @param {Object} formatterParams - Parametry formátovače.
+ * @param {function} onRendered - Callback funkce po vykreslení.
+ * @returns {string} Vrací formátovanou hodnotu buňky.
+ */
+function currencyFormatter(cell, formatterParams, onRendered) {
+    let value = cell.getValue();
+    let floatValue = parseFloat(value);
+    let formattedValue = floatValue.toLocaleString('cs-CZ');
+    let currencySymbol = '';
+
+    switch (currency) {
+        case 'CZK':
+            currencySymbol = 'Kč';
+            break;
+        case 'EUR':
+            currencySymbol = '€';
+            break;
+        case 'USD':
+            currencySymbol = '$';
+            break;
+        case 'PLN':
+            currencySymbol = 'zł';
+            break;
+        case 'HUF':
+            currencySymbol = 'Ft';
+            break;
+        default:
+            currencySymbol = currency;
+    }
+
+    return formattedValue + ` ${currencySymbol}`;
 }
 
 /**
@@ -634,8 +662,8 @@ async function getTableData(startDate, endDate) {
  * @returns {void}
  */
 function setGraf() {
-    grafData.reverse()
-    grafLabels.reverse()
+    grafData.reverse();
+    grafLabels.reverse();
 
     last28Btn.classList.remove("checking-btn");
     last7Btn.classList.remove("checking-btn");
@@ -678,27 +706,70 @@ function setGraf() {
                     beginAtZero: false,
                     ticks: {
                         callback: function (value) {
-                            return value.toLocaleString('cs-CZ') + ' ' + currency;
+                            let currencySymbol = '';
+
+                            switch (currency) {
+                                case 'CZK':
+                                    currencySymbol = 'Kč';
+                                    break;
+                                case 'EUR':
+                                    currencySymbol = '€';
+                                    break;
+                                case 'USD':
+                                    currencySymbol = '$';
+                                    break;
+                                case 'PLN':
+                                    currencySymbol = 'zł';
+                                    break;
+                                case 'HUF':
+                                    currencySymbol = 'Ft';
+                                    break;
+                                default:
+                                    currencySymbol = currency;
+                            }
+
+                            return value.toLocaleString('cs-CZ') + ' ' + currencySymbol;
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const label = context.dataset.label || '';
+                            const value = context.raw;
+                            let currencySymbol = '';
+
+                            switch (currency) {
+                                case 'CZK':
+                                    currencySymbol = 'Kč';
+                                    break;
+                                case 'EUR':
+                                    currencySymbol = '€';
+                                    break;
+                                case 'USD':
+                                    currencySymbol = '$';
+                                    break;
+                                case 'PLN':
+                                    currencySymbol = 'zł';
+                                    break;
+                                case 'HUF':
+                                    currencySymbol = 'Ft';
+                                    break;
+                                default:
+                                    currencySymbol = currency;
+                            }
+
+                            return `${label}: ${value.toLocaleString('cs-CZ')} ${currencySymbol}`;
                         }
                     }
                 }
             }
         }
     });
-    // loading.style.display = "none";
-}
 
-/**
- * Formátuje hodnotu buňky jako měnu.
- * @param {Object} cell - Buňka Tabulatoru.
- * @param {Object} formatterParams - Parametry formátovače.
- * @param {function} onRendered - Callback funkce po vykreslení.
- * @returns {string} Vrací formátovanou hodnotu buňky.
- */
-function currencyFormatter(cell, formatterParams, onRendered) {
-    let value = cell.getValue();
-    let floatValue = parseFloat(value);
-    return floatValue.toLocaleString('cs-CZ') + ` ${currency}`;
+    // loading.style.display = "none";
 }
 
 /**
@@ -725,7 +796,6 @@ function percentageFormatter(cell, formatterParams, onRendered) {
     let value = cell.getValue();
     return value.toLocaleString('cs-CZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
 }
-
 
 /**
  * Vlastní formátovač pro podmíněné formátování buňky.
@@ -808,8 +878,8 @@ function setTable() {
                     let row = cell.getRow();
                     let sourceMedium = row.getData().sourceMedium;
                     if (sourceMedium === 'google / cpc' && cell.getValue() == 0) {
+                        addActive(settingBox, homeBox, grafBox, configurationBox);
                         hideStep(settingContainer, grafContainer, confugirationContainer, helpContainer);
-                        addActive(settingBox, grafBox, configurationBox, helpBox);
                     }
                 },
                 cellMouseOver: (e, cell) => {
@@ -843,15 +913,13 @@ function setTable() {
     });
 }
 
-
-
 /**
  * Aktualizuje data pro graf a tabulku.
  * @param {number} numOfDays - Počet dní pro datumové rozmezí.
  * @returns {Promise<void>} Vrací Promise.
  */
 async function updateData(numOfDays) {
-    missingData.classList.add("hidden")
+    missingData.classList.add("hidden");
     grafLabels = [];
     grafData = [];
     let dateRange = getDate(numOfDays);
@@ -890,3 +958,4 @@ document.addEventListener("DOMContentLoaded", () => {
     barChart.classList.remove("hidden");
     updateData(7);
 });
+
