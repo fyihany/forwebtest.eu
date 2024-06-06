@@ -410,11 +410,16 @@ step3Btn.addEventListener("click", thatsAll);
 // newMailBtn.addEventListener("click", sendMail); // Dočasně vypnuto
 
 homeBox.addEventListener("click", () => {
+    document.body.style.overflowY = "auto"
+
+
     hideStep(homeContainer, grafContainer, confugirationContainer, settingContainer);
     addActive(homeBox, grafBox, configurationBox, settingBox);
 });
 
 grafBox.addEventListener("click", () => {
+    document.body.style.overflowY = "scroll"
+
     hideStep(grafContainer, homeContainer, confugirationContainer, settingContainer);
     addActive(grafBox, homeBox, configurationBox, settingBox);
 
@@ -429,11 +434,17 @@ grafBox.addEventListener("click", () => {
 });
 
 configurationBox.addEventListener("click", () => {
+    document.body.style.overflowY = "auto"
+
+
     hideStep(confugirationContainer, homeContainer, settingContainer, grafContainer);
     addActive(configurationBox, homeBox, grafBox, settingBox);
 });
 
 settingBox.addEventListener("click", () => {
+    document.body.style.overflowY = "auto"
+
+
     hideStep(settingContainer, homeContainer, grafContainer, confugirationContainer);
     addActive(settingBox, homeBox, grafBox, configurationBox);
 });
@@ -957,5 +968,4 @@ last28Btn.addEventListener("click", () => {
 document.addEventListener("DOMContentLoaded", () => {
     barChart.classList.remove("hidden");
     updateData(7);
-});
-
+});    document.body.style.overflowY = "scroll"

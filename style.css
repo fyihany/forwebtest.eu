@@ -13,7 +13,6 @@
 
 body {
     background-color: var(--background-color);
-   
 }
 
 /* Kontejner */
@@ -35,7 +34,8 @@ body {
     flex: 1;
     z-index: 10;
     position: relative;
-    padding: 5px; /* Adds padding around the container */
+    padding: 5px;
+    /* Adds padding around the container */
 }
 
 .menu-list {
@@ -46,8 +46,10 @@ body {
     align-items: start;
     font-weight: 600;
     color: #fff;
-    width: max-content; /* Ensures the width is as wide as its content */
-    padding: 5px; /* Adds padding inside the menu list */
+    width: max-content;
+    /* Ensures the width is as wide as its content */
+    padding: 5px;
+    /* Adds padding inside the menu list */
 }
 
 #dp-logo-box {
@@ -90,11 +92,11 @@ body {
     flex-direction: column;
     justify-content: start;
     align-items: center;
-   
 }
 
 /* Kontejner grafu */
 #graf-container {
+    width: auto;
     position: relative;
     min-height: 100dvh;
     background-color: var(--background-color);
@@ -112,7 +114,7 @@ body {
 }
 
 #example-table {
-    width: 100%;
+    width: auto;
     margin-block: 3rem;
     font-size: 13px;
 
@@ -475,10 +477,11 @@ input[type="email"] {
     line-height: 30px;
     font-size: 12px;
     color: rgb(117, 117, 117);
-    position: absolute;
-    bottom: 0;
+    padding-top: 50px;
+    /* position: absolute; */
+    /* bottom: 0;
     left: 50%;
-    translate: -50%;
+    translate: -50%; */
 }
 
 #tel {
@@ -594,16 +597,17 @@ input[type="email"] {
 
 
 #graph-loading-line {
-  stroke-dasharray: 145.37; /* Total path length (adjust as needed) */
-  stroke-dashoffset: 145.37;
-stroke-linecap: round;
-  animation: draw 1s linear infinite;
+    stroke-dasharray: 145.37;
+    /* Total path length (adjust as needed) */
+    stroke-dashoffset: 145.37;
+    stroke-linecap: round;
+    animation: draw 1s ease-out infinite;
 }
 
 @keyframes draw {
-  to {
-    stroke-dashoffset: 0;
-  }
+    to {
+        stroke-dashoffset: 0;
+    }
 }
 
 
