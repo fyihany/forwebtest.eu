@@ -1,19 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.df05ab21.css",
-    "main.js": "/static/js/main.fb7b92a1.js",
+    "main.css": "/static/css/main.0778f753.css",
+    "main.js": "/static/js/main.62e0b539.js",
     "static/media/logo.svg": "/static/media/logo.a061b3dbed43e9109c42eb1fe9d1ca54.svg",
+    "static/media/advisio-logo.svg": "/static/media/advisio-logo.b557568d8d9e91ef6195a27ac77c634f.svg",
     "static/media/dp.svg": "/static/media/dp.fa3aac7d5cb5ba615f6af6536f1fc38b.svg",
     "static/media/ico-phone-2.svg": "/static/media/ico-phone-2.47aff5cc44ecb55043ae3a2bb8387b67.svg",
     "static/media/xmark-solid.svg": "/static/media/xmark-solid.07b101b324ef2fd3fb9a3b2343ce828d.svg",
     "static/media/check-green.svg": "/static/media/check-green.539e232bf340471647ed6aa34983235f.svg",
     "static/media/check-solid.svg": "/static/media/check-solid.1b71b2837f4ab1d323c3.svg",
     "index.html": "/index.html",
-    "main.df05ab21.css.map": "/static/css/main.df05ab21.css.map",
-    "main.fb7b92a1.js.map": "/static/js/main.fb7b92a1.js.map"
+    "main.0778f753.css.map": "/static/css/main.0778f753.css.map",
+    "main.62e0b539.js.map": "/static/js/main.62e0b539.js.map"
   },
   "entrypoints": [
-    "static/css/main.df05ab21.css",
-    "static/js/main.fb7b92a1.js"
+    "static/css/main.0778f753.css",
+    "static/js/main.62e0b539.js"
   ]
 }
