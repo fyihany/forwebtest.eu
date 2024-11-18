@@ -1,0 +1,7 @@
+.my-element {
+    --primary-color: lightblue;
+    --secondary-color: darkblue;
+    background-image: paint(my-painter);
+    width: 200px;
+    height: 200px;
+}
