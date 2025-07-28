@@ -1,91 +1,108 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>E‑shop s detekcí operátora</title><!DOCTYPE html>
-<html lang="cs">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Super E‑shop s pokročilou detekcí</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super E‑shop</title>
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    /* Základní styl pro e‑shop */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; }
-    header, footer { background: #004a99; color: white; padding: 1rem; text-align: center; }
-    main { display: flex; flex-direction: column; align-items: center; padding: 2rem; }
-
-    /* Sekce produktů, košíku a checkout */
-    .products, .cart, .checkout { width: 100%; max-width: 800px; background: white; border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 2rem; padding: 1.5rem; display: none; }
-    .products.active, .cart.active, .checkout.active { display: block; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 1rem; }
-    .product { border: 1px solid #ddd; border-radius: 6px; overflow: hidden; background: #fff; }
-    .product img { width: 100%; height: 150px; object-fit: cover; }
-    .product .info { padding: 0.5rem; }
-    .product h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-    .product p { font-size: 0.9rem; margin-bottom: 0.5rem; }
-    .product button { background: #0074d9; color: white; border: none; padding: 0.5rem; border-radius: 4px; cursor: pointer; }
-
-    .cart table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
-    .cart th, .cart td { border: 1px solid #ddd; padding: 0.5rem; text-align: center; }
-    .cart button, .checkout button { background: #0074d9; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; }
-
-    .checkout form { display: flex; flex-direction: column; gap: 1rem; }
-    .checkout label { font-weight: bold; }
-    .checkout input { padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
-
-    /* Ikona detekce */
-    #cornerIcon { position: fixed; top: 10px; right: 10px; font-size: 2rem; z-index: 1000; }
+    :root {
+      --color-primary: #1a73e8;
+      --color-primary-dark: #185abc;
+      --color-secondary: #fbbc05;
+      --color-bg: #f5f5f5;
+      --color-surface: #ffffff;
+      --color-text: #202124;
+      --radius: 8px;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      --spacing: 1rem;
+      --transition: 0.3s ease;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Roboto', sans-serif; background: var(--color-bg); color: var(--color-text); line-height: 1.6; }
+    header, footer { background: var(--color-primary); color: #fff; padding: var(--spacing); text-align: center; }
+    main { padding: var(--spacing); max-width: 1200px; margin: auto; }
+    h1, h2 { font-weight: 500; }
+    button { font-family: inherit; font-size: 1rem; padding: 0.75rem 1.5rem; border: none; border-radius: var(--radius); cursor: pointer; transition: var(--transition); }
+    button.primary { background: var(--color-primary); color: #fff; }
+    button.primary:hover { background: var(--color-primary-dark); }
+    button.secondary { background: var(--color-secondary); color: #fff; }
+    button.secondary:hover { filter: brightness(0.9); }
+    .stepper { display: flex; justify-content: space-between; margin-bottom: var(--spacing); }
+    .stepper .step { flex: 1; position: relative; text-align: center; }
+    .stepper .step:not(:last-child)::after { content: ''; position: absolute; top: 50%; right: 0; width: 100%; height: 2px; background: #e0e0e0; z-index: -1; transform: translateY(-50%); }
+    .stepper .step .circle { width: 32px; height: 32px; border-radius: 50%; background: #e0e0e0; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; }
+    .stepper .step.active .circle { background: var(--color-primary); color: #fff; }
+    .stepper .step.active + .step .circle { background: #e0e0e0; }
+    .card { background: var(--color-surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: var(--spacing); }
+    .grid { display: grid; gap: var(--spacing); }
+    .products .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .product img { width: 100%; border-radius: var(--radius) var(--radius) 0 0; }
+    .product .info { padding: var(--spacing); }
+    .product h3 { margin-bottom: 0.5rem; font-weight: 500; }
+    .product p { font-size: 0.9rem; margin-bottom: var(--spacing); color: #5f6368; }
+    .cart table { width: 100%; border-collapse: collapse; margin-bottom: var(--spacing); }
+    .cart th, .cart td { padding: 0.75rem; border-bottom: 1px solid #e0e0e0; }
+    .checkout form { display: grid; grid-template-columns: 1fr; gap: var(--spacing); }
+    .checkout label { font-weight: 500; }
+    .checkout input { padding: 0.75rem; border: 1px solid #ccc; border-radius: var(--radius); }
+    #cornerIcon { position: fixed; top: var(--spacing); right: var(--spacing); font-size: 2.5rem; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Super E‑shop</h1>
-  </header>
-
+  <header><h1>Super E‑shop</h1></header>
   <main>
-    <!-- Krok 1: Výpis produktů -->
-    <section id="step-products" class="products active">
+    <!-- Stepper -->
+    <div class="stepper">
+      <div class="step active"><div class="circle">1</div><div>Produkty</div></div>
+      <div class="step"><div class="circle">2</div><div>Košík</div></div>
+      <div class="step"><div class="circle">3</div><div>Objednávka</div></div>
+    </div>
+    <!-- Products -->
+    <section id="step-products" class="products card">
       <h2>Naše produkty</h2>
-      <div class="grid">
-        <!-- Příklad produktů -->
-        <div class="product">
+      <div class="grid products">
+        <div class="product card">
           <img src="https://via.placeholder.com/300x150?text=Produkt+1" alt="Produkt 1">
           <div class="info">
             <h3>Produkt 1</h3>
             <p>Skvělý výrobek za výhodnou cenu.</p>
-            <button data-id="1" data-name="Produkt 1" data-price="499">Přidat do košíku</button>
+            <button class="primary" data-id="1" data-name="Produkt 1" data-price="499">Přidat do košíku</button>
           </div>
         </div>
-        <div class="product">
+        <div class="product card">
           <img src="https://via.placeholder.com/300x150?text=Produkt+2" alt="Produkt 2">
           <div class="info">
             <h3>Produkt 2</h3>
             <p>Vysoká kvalita a spolehlivost.</p>
-            <button data-id="2" data-name="Produkt 2" data-price="1299">Přidat do košíku</button>
+            <button class="primary" data-id="2" data-name="Produkt 2" data-price="1299">Přidat do košíku</button>
           </div>
         </div>
       </div>
-      <button id="to-cart">Přejít do košíku</button>
+      <div style="text-align:right; margin-top: var(--spacing);">
+        <button class="secondary" id="to-cart">Přejít do košíku</button>
+      </div>
     </section>
-
-    <!-- Krok 2: Košík -->
-    <section id="step-cart" class="cart">
+    <!-- Cart -->
+    <section id="step-cart" class="cart card" style="display:none;">
       <h2>Váš košík</h2>
       <table>
         <thead><tr><th>Produkt</th><th>Cena</th><th>Množství</th><th>Akce</th></tr></thead>
         <tbody id="cart-body"></tbody>
       </table>
-      <p><strong>Celkem: </strong><span id="cart-total">0</span> Kč</p>
-      <button id="to-checkout">Pokračovat k platbě</button>
-      <button id="back-to-products">Zpět na produkty</button>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <strong>Celkem: <span id="cart-total">0</span> Kč</strong>
+        <div>
+          <button class="secondary" id="back-to-products">Zpět na produkty</button>
+          <button class="primary" id="to-checkout">Pokračovat</button>
+        </div>
+      </div>
     </section>
-
-    <!-- Krok 3: Checkout -->
-    <section id="step-checkout" class="checkout">
-      <h2>Objednávka – Krok 1: Údaje zákazníka</h2>
+    <!-- Checkout -->
+    <section id="step-checkout" class="checkout card" style="display:none;">
+      <h2>Objednávka</h2>
       <form id="checkout-form">
         <label for="name">Jméno a příjmení</label>
         <input type="text" id="name" required>
@@ -93,29 +110,25 @@
         <input type="email" id="email" required>
         <label for="address">Adresa</label>
         <input type="text" id="address" required>
-        <button type="submit">Dokončit objednávku</button>
+        <div style="display:flex; justify-content:space-between;">
+          <button class="secondary" type="button" id="back-to-cart">Zpět</button>
+          <button class="primary" type="submit">Dokončit objednávku</button>
+        </div>
       </form>
     </section>
+    <!-- Detection Icon -->
+    <div id="cornerIcon">⌛</div>
   </main>
-
-  <div id="cornerIcon">⌛</div>
-
-  <footer>
-    &copy; 2025 Super E‑shop
-  </footer>
-
+  <footer>&copy; 2025 Super E‑shop</footer>
   <script>
-    // === E‑shop logika ===
+    // E-shop logic
     const cart = {};
     const cartBody = document.getElementById('cart-body');
     const cartTotalEl = document.getElementById('cart-total');
-
     document.querySelectorAll('.product button').forEach(btn => {
       btn.addEventListener('click', () => {
-        const id    = btn.dataset.id;
-        const name  = btn.dataset.name;
-        const price = +btn.dataset.price;
-        cart[id] = cart[id] || { name, price, qty: 0 };
+        const id = btn.dataset.id;
+        cart[id] = cart[id] || { name: btn.dataset.name, price: +btn.dataset.price, qty: 0 };
         cart[id].qty++;
         renderCart();
       });
@@ -125,363 +138,53 @@
       let total = 0;
       Object.values(cart).forEach(item => {
         total += item.price * item.qty;
-        cartBody.innerHTML += `
-          <tr>
-            <td>${item.name}</td>
-            <td>${item.price} Kč</td>
-            <td>${item.qty}</td>
-            <td><button class="remove" data-id="${item.name}">×</button></td>
-          </tr>`;
+        cartBody.innerHTML += `<tr><td>${item.name}</td><td>${item.price} Kč</td><td>${item.qty}</td><td><button class='secondary remove' data-id='${item.name}'>×</button></td></tr>`;
       });
       cartTotalEl.textContent = total;
-      document.querySelectorAll('.remove').forEach(b => {
-        b.addEventListener('click', () => { delete cart[b.dataset.id]; renderCart(); });
+      document.querySelectorAll('.remove').forEach(b => b.addEventListener('click', () => { delete cart[b.dataset.id]; renderCart(); }));
+    }
+    // Navigation
+    document.getElementById('to-cart').onclick = () => switchStep(2);
+    document.getElementById('back-to-products').onclick = () => switchStep(1);
+    document.getElementById('to-checkout').onclick = () => switchStep(3);
+    document.getElementById('back-to-cart').onclick = () => switchStep(2);
+    document.getElementById('checkout-form').onsubmit = e => { e.preventDefault(); alert('Děkujeme za objednávku!'); location.reload(); };
+    function switchStep(step) {
+      const steps = ['step-products','step-cart','step-checkout'];
+      steps.forEach((id,i) => {
+        document.getElementById(id).style.display = (i+1===step?'block':'none');
+        document.querySelectorAll('.step')[i].classList.toggle('active', i+1===step);
       });
     }
-    document.getElementById('to-cart').addEventListener('click', () => showStep('step-cart'));
-    document.getElementById('back-to-products').addEventListener('click', () => showStep('step-products'));
-    document.getElementById('to-checkout').addEventListener('click', () => showStep('step-checkout'));
-    document.getElementById('checkout-form').addEventListener('submit', e => { e.preventDefault(); alert('Děkujeme za objednávku!'); location.reload(); });
-    function showStep(id) {
-      ['step-products','step-cart','step-checkout'].forEach(s => document.getElementById(s).classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
-
-    // === Pokročilá detekce pohybu myši ===
-    const MAX_SAMPLES = 300;
-    const BASE_INTERVAL = 30;
-    const DWELL_THRESH  = 100;      // ms pro detekci zastavení
-    const HIST_BINS     = 8;        // pro entropii úhlů
-
-    // Prahové hodnoty (po kalibraci)
-    const VAR_THRESH      = 800;
-    const ANGLE_THRESH    = 0.7;
-    const JERK_THRESH     = 1000;
-    const ENTROPY_THRESH  = 1.5;
-
-    let samples = [];
-    let lastTime = Date.now();
-    let lastSpeed = null;
-    let hasDwell = false;
-
-    const cornerIcon = document.getElementById('cornerIcon');
-
-    function getInterval() {
-      return BASE_INTERVAL + (Math.random()*20 - 10);
-    }
-
+    // Advanced mouse detection
+    const MAX_SAMPLES = 300, BASE_INTERVAL = 30, DWELL_THRESH = 100, HIST_BINS = 8;
+    const VAR_THRESH=800, ANGLE_THRESH=0.7, JERK_THRESH=1000, ENTROPY_THRESH=1.5;
+    let samples=[], lastTime=Date.now(), lastSpeed=null;
+    const cornerIcon=document.getElementById('cornerIcon');
+    function getInterval() { return BASE_INTERVAL + (Math.random()*20 - 10); }
     function computeFeatures(data) {
-      const speeds = [], angles = [], jerks = [];
-      let dwellCount = 0;
-
-      for (let i = 1; i < data.length; i++) {
-        const dx = data[i].x - data[i-1].x;
-        const dy = data[i].y - data[i-1].y;
-        const dt = (data[i].t - data[i-1].t);
-        const speed = Math.hypot(dx, dy) / (dt/1000 || 1e-6);
-        speeds.push(speed);
-        const angle = Math.atan2(dy, dx);
-        angles.push(angle);
-
-        // jerk
-        if (lastSpeed !== null) {
-          const jerk = Math.abs(speed - lastSpeed) / (dt/1000);
-          jerks.push(jerk);
-        }
-        lastSpeed = speed;
-
-        // dwell
-        if (dt > DWELL_THRESH) dwellCount++;
+      let speeds=[], angles=[], jerks=[]; let dwell=false; let dwellCount=0;
+      for(let i=1;i<data.length;i++){ const dx=data[i].x-data[i-1].x, dy=data[i].y-data[i-1].y, dt=data[i].t-data[i-1].t;
+        const speed=Math.hypot(dx,dy)/(dt/1000||1e-6); speeds.push(speed);
+        const angle=Math.atan2(dy,dx); angles.push(angle);
+        if(lastSpeed!==null){ jerks.push(Math.abs(speed-lastSpeed)/(dt/1000)); }
+        lastSpeed=speed;
+        if(dt>DWELL_THRESH)dwell=true;
       }
-
-      // statistiky rychlosti
-      const meanSpeed = speeds.reduce((a,b)=>a+b,0)/speeds.length;
-      const varSpeed  = speeds.reduce((a,b)=>a+Math.pow(b-meanSpeed,2),0)/speeds.length;
-
-      // prům. změna úhlu
-      const diffs = [];
-      for (let i = 1; i < angles.length; i++) {
-        let d = Math.abs(angles[i] - angles[i-1]);
-        if (d>Math.PI) d = 2*Math.PI - d;
-        diffs.push(d);
-      }
-      const meanAngleChange = diffs.reduce((a,b)=>a+b,0)/diffs.length;
-
-      // prům. jerk
-      const meanJerk = jerks.length ? jerks.reduce((a,b)=>a+b,0)/jerks.length : 0;
-
-      // dwell flag
-      hasDwell = dwellCount > 0;
-
-      // histogram + entropie úhlů
-      const bins = Array(HIST_BINS).fill(0);
-      angles.forEach(a => {
-        let idx = Math.floor(((a + Math.PI)/(2*Math.PI)) * HIST_BINS);
-        if (idx>=HIST_BINS) idx = HIST_BINS-1;
-        bins[idx]++;
-      });
-      const totalAngles = angles.length;
-      let entropy = 0;
-      bins.forEach(c => {
-        if (c>0) {
-          const p = c/totalAngles;
-          entropy -= p * Math.log2(p);
-        }
-      });
-
-      return { varSpeed, meanAngleChange, meanJerk, hasDwell, angleEntropy: entropy };
+      const meanSpeed=speeds.reduce((a,b)=>a+b,0)/speeds.length;
+      const varSpeed=speeds.reduce((a,b)=>a+Math.pow(b-meanSpeed,2),0)/speeds.length;
+      const diffs=[]; for(let i=1;i<angles.length;i++){ let d=Math.abs(angles[i]-angles[i-1]); if(d>Math.PI)d=2*Math.PI-d; diffs.push(d);}      
+      const meanAngleChange=diffs.reduce((a,b)=>a+b,0)/diffs.length;
+      const meanJerk=jerks.length?jerks.reduce((a,b)=>a+b,0)/jerks.length:0;
+      const bins=Array(HIST_BINS).fill(0);
+      angles.forEach(a=>{ let idx=Math.floor(((a+Math.PI)/(2*Math.PI))*HIST_BINS); if(idx>=HIST_BINS)idx=HIST_BINS-1; bins[idx]++; });
+      let entropy=0; bins.forEach(c=>{ if(c>0){ const p=c/angles.length; entropy-=p*Math.log2(p); }});
+      return { varSpeed, meanAngleChange, meanJerk, hasDwell:dwell, angleEntropy:entropy };
     }
-
-    function classify(f) {
-      const ok = [
-        f.varSpeed > VAR_THRESH,
-        f.meanAngleChange > ANGLE_THRESH,
-        f.meanJerk > JERK_THRESH,
-        f.hasDwell,
-        f.angleEntropy > ENTROPY_THRESH
-      ].filter(x=>x).length;
-      return ok >= 4;
-    }
-
-    function updateDetection() {
-      if (samples.length < 5) return;
-      const f = computeFeatures(samples);
-      const human = classify(f);
-      cornerIcon.textContent = human ? '🖐️' : '🤖';
-    }
-
-    window.addEventListener('mousemove', e => {
-      const now = Date.now();
-      if (now - lastTime > getInterval()) {
-        samples.push({ x: e.clientX, y: e.clientY, t: now });
-        lastTime = now;
-        if (samples.length > MAX_SAMPLES) samples.shift();
-        updateDetection();
-      }
-    });
-
-    // Spustíme detekci hned po načtení
-    window.addEventListener('load', () => {
-      cornerIcon.textContent = '⌛';
-      setTimeout(updateDetection, 1000);
-    });
-  </script>
-</body>
-</html>
-  <style>
-    /* Základní reset */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; }
-    header, footer { background: #004a99; color: white; padding: 1rem; text-align: center; }
-    main { display: flex; flex-direction: column; align-items: center; padding: 2rem; }
-    .products, .cart, .checkout { width: 100%; max-width: 800px; background: white; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 2rem; padding: 1.5rem; display: none; }
-    .products.active, .cart.active, .checkout.active { display: block; }
-    .products .grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 1rem; }
-    .product { border: 1px solid #ddd; border-radius: 6px; overflow: hidden; background: #fff; }
-    .product img { width: 100%; height: 150px; object-fit: cover; }
-    .product .info { padding: 0.5rem; }
-    .product .info h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-    .product .info p { font-size: 0.9rem; margin-bottom: 0.5rem; }
-    .product .info button { background: #0074d9; color: white; border: none; padding: 0.5rem; border-radius: 4px; cursor: pointer; }
-    .cart table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
-    .cart th, .cart td { border: 1px solid #ddd; padding: 0.5rem; text-align: center; }
-    .cart button, .checkout button { background: #0074d9; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; }
-    .checkout form { display: flex; flex-direction: column; gap: 1rem; }
-    .checkout label { font-weight: bold; }
-    .checkout input { padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
-    #cornerIcon { position: fixed; top: 10px; right: 10px; font-size: 2rem; z-index: 1000; }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Super E‑shop</h1>
-  </header>
-
-  <main>
-    <!-- Krok 1: Výpis produktů -->
-    <section id="step-products" class="products active">
-      <h2>Naše produkty</h2>
-      <div class="grid">
-        <div class="product">
-          <img src="https://via.placeholder.com/300x150?text=Produkt+1" alt="Produkt 1">
-          <div class="info">
-            <h3>Produkt 1</h3>
-            <p>Skvělý výrobek za výhodnou cenu.</p>
-            <button data-id="1" data-name="Produkt 1" data-price="499">Přidat do košíku</button>
-          </div>
-        </div>
-        <div class="product">
-          <img src="https://via.placeholder.com/300x150?text=Produkt+2" alt="Produkt 2">
-          <div class="info">
-            <h3>Produkt 2</h3>
-            <p>Vysoká kvalita a spolehlivost.</p>
-            <button data-id="2" data-name="Produkt 2" data-price="1299">Přidat do košíku</button>
-          </div>
-        </div>
-        <!-- Další produkty… -->
-      </div>
-      <button id="to-cart">Přejít do košíku</button>
-    </section>
-
-    <!-- Krok 2: Košík -->
-    <section id="step-cart" class="cart">
-      <h2>Váš košík</h2>
-      <table>
-        <thead>
-          <tr><th>Produkt</th><th>Cena</th><th>Množství</th><th>Akce</th></tr>
-        </thead>
-        <tbody id="cart-body">
-          <!-- Naplní se skriptem -->
-        </tbody>
-      </table>
-      <p><strong>Celkem: </strong><span id="cart-total">0</span> Kč</p>
-      <button id="to-checkout">Pokračovat k platbě</button>
-      <button id="back-to-products">Zpět na produkty</button>
-    </section>
-
-    <!-- Krok 3: Checkout -->
-    <section id="step-checkout" class="checkout">
-      <h2>Objednávka – Krok 1: Údaje zákazníka</h2>
-      <form id="checkout-form">
-        <label for="name">Jméno a příjmení</label>
-        <input type="text" id="name" required>
-        <label for="email">E‑mail</label>
-        <input type="email" id="email" required>
-        <label for="address">Adresa</label>
-        <input type="text" id="address" required>
-        <button type="submit">Dokončit objednávku</button>
-      </form>
-    </section>
-  </main>
-
-  <!-- Ikona detekce -->
-  <div id="cornerIcon">❔</div>
-
-  <footer>
-    &copy; 2025 Super E‑shop
-  </footer>
-
-  <script>
-    // === E‑shop logika (košík + vícekrokový proces) ===
-    const cart = {};
-    const cartBody = document.getElementById('cart-body');
-    const cartTotalEl = document.getElementById('cart-total');
-
-    // přidání tlačítek
-    document.querySelectorAll('.product button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id    = btn.dataset.id;
-        const name  = btn.dataset.name;
-        const price = parseInt(btn.dataset.price, 10);
-        cart[id] = cart[id] || { name, price, qty: 0 };
-        cart[id].qty++;
-        renderCart();
-      });
-    });
-    function renderCart() {
-      cartBody.innerHTML = '';
-      let total = 0;
-      for (let id in cart) {
-        const item = cart[id];
-        total += item.price * item.qty;
-        cartBody.innerHTML += `
-          <tr>
-            <td>${item.name}</td>
-            <td>${item.price} Kč</td>
-            <td>${item.qty}</td>
-            <td><button class="remove" data-id="${id}">×</button></td>
-          </tr>`;
-      }
-      cartTotalEl.textContent = total;
-      document.querySelectorAll('.remove').forEach(b => {
-        b.addEventListener('click', () => {
-          delete cart[b.dataset.id];
-          renderCart();
-        });
-      });
-    }
-
-    // navigace mezi kroky
-    document.getElementById('to-cart').addEventListener('click', () => {
-      showStep('step-cart');
-    });
-    document.getElementById('back-to-products').addEventListener('click', () => {
-      showStep('step-products');
-    });
-    document.getElementById('to-checkout').addEventListener('click', () => {
-      showStep('step-checkout');
-    });
-    document.getElementById('checkout-form').addEventListener('submit', e => {
-      e.preventDefault();
-      alert('Děkujeme za objednávku!');
-      location.reload();
-    });
-
-    function showStep(id) {
-      ['step-products','step-cart','step-checkout']
-        .forEach(s => document.getElementById(s).classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
-
-    // === Detekce člověk vs. automat podle myši ===
-    const MAX_SAMPLES    = 300;
-    let samples          = [];
-    let lastTime         = 0;
-    let tracking         = true;  // automaticky hned začneme sledovat
-
-    // Přísné prahy pro spolehlivou detekci
-    const PRAH_ROZPTYL   = 1000;  // nízký rozptyl znamená automat
-    const PRAH_UHEL      = 0.5;   // malá změna úhlu znamená automat
-
-    const cornerIcon     = document.getElementById('cornerIcon');
-
-    function computeFeatures(data) {
-      const speeds = [], angles = [];
-      for (let i = 1; i < data.length; i++) {
-        const dx = data[i].x - data[i-1].x;
-        const dy = data[i].y - data[i-1].y;
-        const dt = (data[i].t - data[i-1].t) / 1000;
-        speeds.push(Math.hypot(dx, dy) / (dt || 1e-6));
-        angles.push(Math.atan2(dy, dx));
-      }
-      const meanSpeed = speeds.reduce((a,b)=>a+b,0)/speeds.length;
-      const varSpeed  = speeds.reduce((a,b)=>a + Math.pow(b-meanSpeed,2),0)/speeds.length;
-      const diffs     = [];
-      for (let i = 1; i < angles.length; i++) {
-        let d = Math.abs(angles[i] - angles[i-1]);
-        if (d > Math.PI) d = 2*Math.PI - d;
-        diffs.push(d);
-      }
-      const meanAngleChange = diffs.reduce((a,b)=>a+b,0)/diffs.length;
-      return { varSpeed, meanAngleChange };
-    }
-
-    function updateDetection() {
-      if (samples.length < 5) return;
-      const f = computeFeatures(samples);
-      const human = (f.varSpeed > PRAH_ROZPTYL && f.meanAngleChange > PRAH_UHEL);
-      cornerIcon.textContent = human ? '🖐️' : '🤖';
-    }
-
-    window.addEventListener('mousemove', e => {
-      if (!tracking) return;
-      const now = Date.now();
-      if (now - lastTime > 30) {
-        samples.push({ x: e.clientX, y: e.clientY, t: now });
-        lastTime = now;
-        if (samples.length > MAX_SAMPLES) samples.shift();
-        updateDetection();
-      }
-    });
-
-    // Načtení stránky spustí sledování hned
-    window.addEventListener('load', () => {
-      cornerIcon.textContent = '⌛'; // indikace rozjezdu
-      setTimeout(() => {
-        // první vyhodnocení po 1s
-        updateDetection();
-      }, 1000);
-    });
+    function classify(f){ const ok=[f.varSpeed>VAR_THRESH, f.meanAngleChange>ANGLE_THRESH, f.meanJerk>JERK_THRESH, f.hasDwell, f.angleEntropy>ENTROPY_THRESH].filter(x=>x).length; return ok>=4;}    
+    function updateDetection(){ if(samples.length<5)return; const f=computeFeatures(samples); cornerIcon.textContent=classify(f)?'🖐️':'🤖'; }
+    window.addEventListener('mousemove',e=>{ const now=Date.now(); if(now-lastTime>getInterval()){ samples.push({x:e.clientX,y:e.clientY,t:now}); lastTime=now; if(samples.length>MAX_SAMPLES)samples.shift(); updateDetection(); }});
+    window.addEventListener('load',()=>{ setTimeout(updateDetection,1000); });
   </script>
 </body>
 </html>
