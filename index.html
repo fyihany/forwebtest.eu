@@ -26,29 +26,22 @@
     <h1>Informace o příchodu na stránku</h1>
     <h2 id="referrer-info">Referrer: <span>Načítání...</span></h2>
     <h2 id="mouse-position-info">Počáteční pozice myši: <span>Čekání na pohyb...</span></h2>
+    <h2 id="webdriver-info">navigator.webdriver: <span>Načítání...</span></h2>
 
     <script>
         // --- Zjištění Referreru pomocí Performance API ---
         function getReferrer() {
             const referrerInfoElement = document.getElementById('referrer-info').querySelector('span');
 
-            // Zkontrolujeme, jestli prohlížeč podporuje Performance API
             if (window.performance && window.performance.getEntriesByType) {
-                // Získáme navigační data
                 const navigationEntries = window.performance.getEntriesByType("navigation");
                 if (navigationEntries.length > 0) {
-                    // Referrer je v prvním (a jediném) záznamu
                     const referrer = navigationEntries[0].referrer;
-                    if (referrer) {
-                        referrerInfoElement.textContent = referrer;
-                    } else {
-                        referrerInfoElement.textContent = "Přímý přístup (žádný referrer)";
-                    }
+                    referrerInfoElement.textContent = referrer || "Přímý přístup (žádný referrer)";
                 } else {
-                     referrerInfoElement.textContent = "Data navigace nejsou k dispozici.";
+                    referrerInfoElement.textContent = "Data navigace nejsou k dispozici.";
                 }
             } else {
-                // Fallback na document.referrer pro starší prohlížeče
                 referrerInfoElement.textContent = document.referrer || "Přímý přístup (žádný referrer)";
             }
         }
@@ -57,20 +50,16 @@
         function getInitialMousePosition() {
             const mousePositionInfoElement = document.getElementById('mouse-position-info').querySelector('span');
 
-            // Funkce, která se spustí při prvním pohybu myši
             const handleFirstMove = (event) => {
                 const x = event.clientX;
                 const y = event.clientY;
-
-                // Rozměry viditelné části okna (viewportu)
                 const vw = window.innerWidth;
                 const vh = window.innerHeight;
 
                 let positionDescription = `X: ${x}, Y: ${y}`;
-                const tolerance = 50; // Tolerance v pixelech pro rohy a střed
+                const tolerance = 50;
 
-                // Analýza pozice
-                if (y < tolerance) { // Horní hrana
+                if (y < tolerance) {
                     if (x < tolerance) {
                         positionDescription = "Levý horní roh";
                     } else if (x > vw - tolerance) {
@@ -78,37 +67,56 @@
                     } else {
                         positionDescription = "U horní hrany";
                     }
-                } else if (y > vh - tolerance) { // Dolní hrana
-                     if (x < tolerance) {
+                } else if (y > vh - tolerance) {
+                    if (x < tolerance) {
                         positionDescription = "Levý dolní roh";
                     } else if (x > vw - tolerance) {
                         positionDescription = "Pravý dolní roh";
                     } else {
                         positionDescription = "U dolní hrany";
                     }
-                } else if (Math.abs(x - vw / 2) < tolerance && Math.abs(y - vh / 2) < tolerance) { // Střed
+                } else if (Math.abs(x - vw / 2) < tolerance && Math.abs(y - vh / 2) < tolerance) {
                     positionDescription = "Uprostřed stránky";
-                } else if (x < tolerance){
+                } else if (x < tolerance) {
                     positionDescription = "U levé hrany";
-                } else if (x > vw - tolerance){
+                } else if (x > vw - tolerance) {
                     positionDescription = "U pravé hrany";
                 }
 
                 mousePositionInfoElement.textContent = positionDescription;
-
-                // Odebereme posluchač události, aby se pozice už dále neaktualizovala
                 document.removeEventListener('mousemove', handleFirstMove);
             };
 
-            // Přidáme posluchač pro událost 'mousemove'
             document.addEventListener('mousemove', handleFirstMove);
         }
 
+        // --- Kontrola navigator.webdriver ---
+        function checkWebdriver() {
+            const webdriverInfoElement = document.getElementById('webdriver-info').querySelector('span');
 
-        // Spustíme obě funkce po načtení stránky
+            const desc = Object.getOwnPropertyDescriptor(Navigator.prototype, 'webdriver');
+            const currentValue = navigator.webdriver;
+
+            let status = `Hodnota: ${currentValue}`;
+
+            if (!desc) {
+                status += " | Descriptor neexistuje – vlastnost byla přepsána nebo odstraněna.";
+            } else {
+                const isNativeGetter = desc.get && desc.get.toString().includes('[native code]');
+                if (!isNativeGetter) {
+                    status += " | Getter byl přepsán skriptem!";
+                } else {
+                    status += " | Getter je nativní.";
+                }
+            }
+
+            webdriverInfoElement.textContent = status;
+        }
+
         window.onload = () => {
             getReferrer();
             getInitialMousePosition();
+            checkWebdriver();
         };
     </script>
 </body>
