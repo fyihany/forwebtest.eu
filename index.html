@@ -31,12 +31,12 @@
     <button id="resetBtn">Reset</button>
 
     <label>
-      Rozptyl rychlosti &gt; <span id="speedVarLabel">100</span>
-      <input type="range" id="speedVarThresh" min="0" max="500" value="100">
+      Rozptyl rychlosti &gt; <span id="speedVarLabel">0</span>
+      <input type="range" id="speedVarThresh" min="0" max="500" value="0">
     </label>
     <label>
-      Prům. změna úhlu &gt; <span id="angleThreshLabel">0.5</span>
-      <input type="range" id="angleThresh" min="0" max="3.14" step="0.01" value="0.5">
+      Prům. změna úhlu &gt; <span id="angleThreshLabel">0.00</span>
+      <input type="range" id="angleThresh" min="0" max="3.14" step="0.01" value="0">
     </label>
   </div>
 
@@ -136,7 +136,6 @@
       drawPath(samples);
       const human = classify(f);
       statusEl.textContent = human ? '🖐️ Lidský operátor' : '🤖 Pravděpodobně automat';
-      // Aktualizace rohové ikonky
       cornerIcon.textContent = human ? '🖐️' : '🤖';
     }
 
