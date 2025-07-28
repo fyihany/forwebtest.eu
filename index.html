@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -7,16 +8,20 @@
   <style>
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; background: #f4f4f9; }
     header { background: #4a90e2; color: white; width: 100%; padding: 1rem; text-align: center; }
-    #controls, #metrics, #status, #canvas-container { background: white; margin: 1rem; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); width: 90%; max-width: 600px; }
+    #controls, #metrics, #status, #canvas-container { 
+      background: white; margin: 1rem; padding: 1rem; 
+      border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
+      width: 90%; max-width: 600px;
+    }
     #controls label { display: block; margin-top: 0.5rem; }
-    #controls input[type=range] { width: 100%; }
+    #controls input[type=range], #controls input[type=color] { width: 100%; margin-top: 0.25rem; }
+    #controls input[type=checkbox] { margin-right: 0.5rem; }
     #metrics span { display: inline-block; width: 48%; margin-bottom: 0.5rem; }
     #metrics span b { display: inline-block; width: 120px; }
     #status { font-size: 1.2rem; text-align: center; }
     button { background: #4a90e2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; margin: 0.5rem; }
     button:disabled { background: #ccc; cursor: not-allowed; }
-    #mouseCanvas { background: #fff; border: 1px solid #ddd; width: 100%; height: 300px; }
-    /* Rohová ikonka */
+    #mouseCanvas { background: #fff; border: 1px solid #ddd; width: 100%; height: 300px; display: block; }
     #cornerIcon { position: fixed; top: 10px; right: 10px; font-size: 2rem; z-index: 1000; }
   </style>
 </head>
@@ -38,6 +43,20 @@
       Prům. změna úhlu &gt; <span id="angleThreshLabel">0.00</span>
       <input type="range" id="angleThresh" min="0" max="3.14" step="0.01" value="0">
     </label>
+
+    <!-- Nové interaktivní prvky -->
+    <label>
+      Interval vzorkování (ms): <span id="intervalLabel">30</span>
+      <input type="range" id="intervalThresh" min="10" max="200" step="10" value="30">
+    </label>
+    <label>
+      Barva trasy:
+      <input type="color" id="pathColor" value="#4a90e2">
+    </label>
+    <label>
+      <input type="checkbox" id="showGrid"> Zobrazit mřížku na canvas
+    </label>
+    <button id="downloadBtn">Stáhnout trasu</button>
   </div>
 
   <div id="metrics">
@@ -47,7 +66,6 @@
   </div>
 
   <div id="status">Status: čeká na data...</div>
-  <!-- Rohová ikonka indikátoru -->
   <div id="cornerIcon">❔</div>
 
   <div id="canvas-container">
@@ -56,34 +74,52 @@
 
   <script>
     const MAX_SAMPLES = 300;
-    const SAMPLE_INTERVAL = 30;
+    let sampleInterval = 30;               // dynamický interval vzorkování
     let samples = [];
     let lastTime = 0;
     let tracking = false;
 
+    // Prahy pro klasifikaci
+    const PRAH_ROZPTYL = 5000000;
+    const PRAH_UHEL    = 1.5;
+
     const startBtn = document.getElementById('startBtn');
-    const stopBtn = document.getElementById('stopBtn');
+    const stopBtn  = document.getElementById('stopBtn');
     const resetBtn = document.getElementById('resetBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
     const statusEl = document.getElementById('status');
     const meanSpeedEl = document.getElementById('meanSpeed');
-    const varSpeedEl = document.getElementById('varSpeed');
+    const varSpeedEl  = document.getElementById('varSpeed');
     const angleChangeEl = document.getElementById('angleChange');
+
     const speedVarThreshInput = document.getElementById('speedVarThresh');
-    const angleThreshInput = document.getElementById('angleThresh');
-    const speedVarLabel = document.getElementById('speedVarLabel');
-    const angleThreshLabel = document.getElementById('angleThreshLabel');
+    const angleThreshInput    = document.getElementById('angleThresh');
+    const speedVarLabel       = document.getElementById('speedVarLabel');
+    const angleThreshLabel    = document.getElementById('angleThreshLabel');
+
+    const intervalInput = document.getElementById('intervalThresh');
+    const intervalLabel = document.getElementById('intervalLabel');
+    const pathColorInput = document.getElementById('pathColor');
+    const showGridInput  = document.getElementById('showGrid');
+
     const canvas = document.getElementById('mouseCanvas');
     const ctx = canvas.getContext('2d');
     const cornerIcon = document.getElementById('cornerIcon');
-    canvas.width = canvas.clientWidth;
+    canvas.width  = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 
+    // Aktualizace štítků
     function updateThresholdLabels() {
       speedVarLabel.textContent = speedVarThreshInput.value;
       angleThreshLabel.textContent = parseFloat(angleThreshInput.value).toFixed(2);
     }
     speedVarThreshInput.addEventListener('input', updateThresholdLabels);
     angleThreshInput.addEventListener('input', updateThresholdLabels);
+
+    intervalInput.addEventListener('input', () => {
+      sampleInterval = parseInt(intervalInput.value, 10);
+      intervalLabel.textContent = intervalInput.value;
+    });
 
     function computeFeatures(data) {
       const speeds = [];
@@ -96,7 +132,7 @@
         angles.push(Math.atan2(dy, dx));
       }
       const meanSpeed = speeds.reduce((a,b)=>a+b,0)/speeds.length;
-      const varSpeed = speeds.reduce((a,b)=>a + Math.pow(b-meanSpeed,2),0)/speeds.length;
+      const varSpeed  = speeds.reduce((a,b)=>a + Math.pow(b-meanSpeed,2),0)/speeds.length;
       const diffs = [];
       for (let i = 1; i < angles.length; i++) {
         let d = Math.abs(angles[i] - angles[i-1]);
@@ -107,42 +143,60 @@
       return { meanSpeed, varSpeed, meanAngleChange };
     }
 
+    function drawGrid() {
+      const step = 50;
+      ctx.strokeStyle = '#eee';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += step) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += step) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+      }
+    }
+
     function drawPath(data) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (showGridInput.checked) drawGrid();
+
       if (!data.length) return;
       ctx.beginPath();
-      ctx.moveTo(data[0].x / window.innerWidth * canvas.width,
-                 data[0].y / window.innerHeight * canvas.height);
+      ctx.moveTo(
+        data[0].x / window.innerWidth * canvas.width,
+        data[0].y / window.innerHeight * canvas.height
+      );
       data.forEach(p => {
-        ctx.lineTo(p.x/window.innerWidth*canvas.width, p.y/window.innerHeight*canvas.height);
+        ctx.lineTo(
+          p.x / window.innerWidth * canvas.width,
+          p.y / window.innerHeight * canvas.height
+        );
       });
-      ctx.strokeStyle = '#4a90e2';
+      ctx.strokeStyle = pathColorInput.value;
       ctx.lineWidth = 2;
       ctx.stroke();
     }
 
     function classify(features) {
-      const svt = parseFloat(speedVarThreshInput.value);
-      const at = parseFloat(angleThreshInput.value);
-      return (features.varSpeed > svt && features.meanAngleChange > at);
+      return (features.varSpeed > PRAH_ROZPTYL && features.meanAngleChange > PRAH_UHEL);
     }
 
     function updateMetrics() {
       if (samples.length < 5) return;
       const f = computeFeatures(samples);
-      meanSpeedEl.textContent = f.meanSpeed.toFixed(1);
-      varSpeedEl.textContent = f.varSpeed.toFixed(1);
+      meanSpeedEl.textContent   = f.meanSpeed.toFixed(1);
+      varSpeedEl.textContent    = f.varSpeed.toFixed(1);
       angleChangeEl.textContent = f.meanAngleChange.toFixed(2);
       drawPath(samples);
+
       const human = classify(f);
-      statusEl.textContent = human ? '🖐️ Lidský operátor' : '🤖 Pravděpodobně automat';
+      statusEl.textContent   = human ? '🖐️ Lidský operátor' : '🤖 Pravděpodobně automat';
       cornerIcon.textContent = human ? '🖐️' : '🤖';
     }
 
     function onMouseMove(e) {
       if (!tracking) return;
       const now = Date.now();
-      if (now - lastTime > SAMPLE_INTERVAL) {
+      if (now - lastTime > sampleInterval) {
         samples.push({ x: e.clientX, y: e.clientY, t: now });
         lastTime = now;
         if (samples.length > MAX_SAMPLES) samples.shift();
@@ -153,27 +207,35 @@
     startBtn.addEventListener('click', () => {
       tracking = true;
       startBtn.disabled = true;
-      stopBtn.disabled = false;
+      stopBtn.disabled  = false;
       statusEl.textContent = 'Sledování spuštěno...';
     });
     stopBtn.addEventListener('click', () => {
       tracking = false;
       startBtn.disabled = false;
-      stopBtn.disabled = true;
+      stopBtn.disabled  = true;
       statusEl.textContent = 'Sledování zastaveno.';
     });
     resetBtn.addEventListener('click', () => {
-      samples = [];
-      lastTime = 0;
+      samples = []; lastTime = 0;
       statusEl.textContent = 'Data vymazána.';
       meanSpeedEl.textContent = '0';
-      varSpeedEl.textContent = '0';
+      varSpeedEl.textContent  = '0';
       angleChangeEl.textContent = '0';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       cornerIcon.textContent = '❔';
     });
+
+    downloadBtn.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'mouse_trace.png';
+      link.click();
+    });
+
     window.addEventListener('mousemove', onMouseMove);
     updateThresholdLabels();
   </script>
 </body>
 </html>
+```
