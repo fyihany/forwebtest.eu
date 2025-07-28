@@ -1,15 +1,180 @@
-<!doctype html>
-<html lang="en">
-
+<!DOCTYPE html>
+<html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet" href="style.css">
-    <title>For web test</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detekce člověk vs. automat podle myši</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; background: #f4f4f9; }
+    header { background: #4a90e2; color: white; width: 100%; padding: 1rem; text-align: center; }
+    #controls, #metrics, #status, #canvas-container { background: white; margin: 1rem; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); width: 90%; max-width: 600px; }
+    #controls label { display: block; margin-top: 0.5rem; }
+    #controls input[type=range] { width: 100%; }
+    #metrics span { display: inline-block; width: 48%; margin-bottom: 0.5rem; }
+    #metrics span b { display: inline-block; width: 120px; }
+    #status { font-size: 1.2rem; text-align: center; }
+    button { background: #4a90e2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; margin: 0.5rem; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+    #mouseCanvas { background: #fff; border: 1px solid #ddd; width: 100%; height: 300px; }
+    /* Rohová ikonka */
+    #cornerIcon { position: fixed; top: 10px; right: 10px; font-size: 2rem; z-index: 1000; }
+  </style>
 </head>
+<body>
+  <header>
+    <h1>Detekce člověk vs. automat podle myši</h1>
+  </header>
 
-<body>    
-    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Mollitia, doloribus atque molestias sit sint voluptatem neque aut! Inventore numquam perspiciatis obcaecati amet doloremque consequuntur, corrupti nesciunt, eligendi distinctio mollitia ex suscipit provident hic doloribus facilis, voluptate optio praesentium aut voluptatibus eaque? Beatae quisquam culpa praesentium veritatis excepturi delectus reiciendis necessitatibus laboriosam. Optio atque pariatur laborum minus consequuntur numquam, facilis animi modi illo itaque inventore adipisci amet praesentium blanditiis nostrum rem repudiandae sapiente, cumque fuga dignissimos voluptatum labore facere sunt. Accusamus perferendis repellat iste rerum voluptatibus quae ipsam! Nam dignissimos minus minima dolorum a corrupti id consequatur eaque, soluta architecto ipsum, dolores quia? Beatae magnam recusandae quia placeat ab quisquam, id dignissimos omnis eum ipsa impedit praesentium adipisci iure earum cumque fugiat commodi autem rerum vero voluptatem rem eos ex unde quaerat? Quod rerum, dolorem laboriosam repellendus vel placeat illo earum maiores sunt omnis ipsam aspernatur deleniti veritatis tenetur ipsum error adipisci atque. Quo aperiam cum debitis dolorem, placeat esse sapiente? Laborum necessitatibus adipisci cum numquam velit et distinctio, accusamus exercitationem error voluptatum est non sapiente consequuntur? Perferendis dolore natus quia obcaecati nisi quo ratione facere, labore ab voluptatum provident quam hic doloribus aspernatur incidunt, error repudiandae maiores, molestiae animi veniam.</p>
+  <div id="controls">
+    <button id="startBtn">Start sledování</button>
+    <button id="stopBtn" disabled>Stop sledování</button>
+    <button id="resetBtn">Reset</button>
+
+    <label>
+      Rozptyl rychlosti &gt; <span id="speedVarLabel">100</span>
+      <input type="range" id="speedVarThresh" min="0" max="500" value="100">
+    </label>
+    <label>
+      Prům. změna úhlu &gt; <span id="angleThreshLabel">0.5</span>
+      <input type="range" id="angleThresh" min="0" max="3.14" step="0.01" value="0.5">
+    </label>
+  </div>
+
+  <div id="metrics">
+    <span><b>Prům. rychlost:</b> <span id="meanSpeed">0</span> px/s</span>
+    <span><b>Rozptyl rychlosti:</b> <span id="varSpeed">0</span> px²/s²</span>
+    <span><b>Prům. změna úhlu:</b> <span id="angleChange">0</span> rad</span>
+  </div>
+
+  <div id="status">Status: čeká na data...</div>
+  <!-- Rohová ikonka indikátoru -->
+  <div id="cornerIcon">❔</div>
+
+  <div id="canvas-container">
+    <canvas id="mouseCanvas"></canvas>
+  </div>
+
+  <script>
+    const MAX_SAMPLES = 300;
+    const SAMPLE_INTERVAL = 30;
+    let samples = [];
+    let lastTime = 0;
+    let tracking = false;
+
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const statusEl = document.getElementById('status');
+    const meanSpeedEl = document.getElementById('meanSpeed');
+    const varSpeedEl = document.getElementById('varSpeed');
+    const angleChangeEl = document.getElementById('angleChange');
+    const speedVarThreshInput = document.getElementById('speedVarThresh');
+    const angleThreshInput = document.getElementById('angleThresh');
+    const speedVarLabel = document.getElementById('speedVarLabel');
+    const angleThreshLabel = document.getElementById('angleThreshLabel');
+    const canvas = document.getElementById('mouseCanvas');
+    const ctx = canvas.getContext('2d');
+    const cornerIcon = document.getElementById('cornerIcon');
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+
+    function updateThresholdLabels() {
+      speedVarLabel.textContent = speedVarThreshInput.value;
+      angleThreshLabel.textContent = parseFloat(angleThreshInput.value).toFixed(2);
+    }
+    speedVarThreshInput.addEventListener('input', updateThresholdLabels);
+    angleThreshInput.addEventListener('input', updateThresholdLabels);
+
+    function computeFeatures(data) {
+      const speeds = [];
+      const angles = [];
+      for (let i = 1; i < data.length; i++) {
+        const dx = data[i].x - data[i-1].x;
+        const dy = data[i].y - data[i-1].y;
+        const dt = (data[i].t - data[i-1].t) / 1000;
+        speeds.push(Math.hypot(dx, dy) / (dt || 1e-6));
+        angles.push(Math.atan2(dy, dx));
+      }
+      const meanSpeed = speeds.reduce((a,b)=>a+b,0)/speeds.length;
+      const varSpeed = speeds.reduce((a,b)=>a + Math.pow(b-meanSpeed,2),0)/speeds.length;
+      const diffs = [];
+      for (let i = 1; i < angles.length; i++) {
+        let d = Math.abs(angles[i] - angles[i-1]);
+        if (d > Math.PI) d = 2*Math.PI - d;
+        diffs.push(d);
+      }
+      const meanAngleChange = diffs.reduce((a,b)=>a+b,0)/diffs.length;
+      return { meanSpeed, varSpeed, meanAngleChange };
+    }
+
+    function drawPath(data) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!data.length) return;
+      ctx.beginPath();
+      ctx.moveTo(data[0].x / window.innerWidth * canvas.width,
+                 data[0].y / window.innerHeight * canvas.height);
+      data.forEach(p => {
+        ctx.lineTo(p.x/window.innerWidth*canvas.width, p.y/window.innerHeight*canvas.height);
+      });
+      ctx.strokeStyle = '#4a90e2';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function classify(features) {
+      const svt = parseFloat(speedVarThreshInput.value);
+      const at = parseFloat(angleThreshInput.value);
+      return (features.varSpeed > svt && features.meanAngleChange > at);
+    }
+
+    function updateMetrics() {
+      if (samples.length < 5) return;
+      const f = computeFeatures(samples);
+      meanSpeedEl.textContent = f.meanSpeed.toFixed(1);
+      varSpeedEl.textContent = f.varSpeed.toFixed(1);
+      angleChangeEl.textContent = f.meanAngleChange.toFixed(2);
+      drawPath(samples);
+      const human = classify(f);
+      statusEl.textContent = human ? '🖐️ Lidský operátor' : '🤖 Pravděpodobně automat';
+      // Aktualizace rohové ikonky
+      cornerIcon.textContent = human ? '🖐️' : '🤖';
+    }
+
+    function onMouseMove(e) {
+      if (!tracking) return;
+      const now = Date.now();
+      if (now - lastTime > SAMPLE_INTERVAL) {
+        samples.push({ x: e.clientX, y: e.clientY, t: now });
+        lastTime = now;
+        if (samples.length > MAX_SAMPLES) samples.shift();
+        updateMetrics();
+      }
+    }
+
+    startBtn.addEventListener('click', () => {
+      tracking = true;
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      statusEl.textContent = 'Sledování spuštěno...';
+    });
+    stopBtn.addEventListener('click', () => {
+      tracking = false;
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      statusEl.textContent = 'Sledování zastaveno.';
+    });
+    resetBtn.addEventListener('click', () => {
+      samples = [];
+      lastTime = 0;
+      statusEl.textContent = 'Data vymazána.';
+      meanSpeedEl.textContent = '0';
+      varSpeedEl.textContent = '0';
+      angleChangeEl.textContent = '0';
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      cornerIcon.textContent = '❔';
+    });
+    window.addEventListener('mousemove', onMouseMove);
+    updateThresholdLabels();
+  </script>
 </body>
-
 </html>
