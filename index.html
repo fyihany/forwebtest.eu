@@ -44,7 +44,6 @@
         .coupon-section { margin-top: 20px; }
         .coupon-section input { width: calc(100% - 22px); padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
 
-        /* ----- STYLY PRO DETEKCI ----- */
         .aria-honeypot {
             position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
             overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
@@ -56,9 +55,8 @@
             font-family: monospace; z-index: 1000; transition: background-color 0.5s;
         }
         
-        /* ----- NOVINKA: STYL PRO VAROVNOU ZPRÁVU ----- */
         #honeypot-alert {
-            display: none; /* Na začátku skryté */
+            display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
@@ -160,8 +158,6 @@
                 suspicionScore = 100;
                 console.error(`KRITICKÉ: Zaznamenána interakce s neviditelnou ARIA pastí!`);
                 updateSuspicionDisplay();
-
-                // NOVINKA: Zobrazí varovnou zprávu na celé obrazovce
                 document.getElementById('honeypot-alert').style.display = 'flex';
                 return;
             }
@@ -180,13 +176,28 @@
         }, true);
 
         function updateSuspicionDisplay() {
-            suspicionDisplay.textContent = `Skóre podezření: ${suspicionScore}`;
+            // Tato funkce nyní jen mění barvu pozadí podle skóre
             if (suspicionScore >= 100) {
                 suspicionDisplay.style.backgroundColor = '#e63946';
             } else if (suspicionScore > 30) {
                 suspicionDisplay.style.backgroundColor = '#e76f51';
             }
         }
+        
+        // ----- NOVINKA: Animace indikátoru kontroly -----
+        let dotCount = 0;
+        setInterval(() => {
+            // Vytvoříme text s tečkami podle aktuálního stavu `dotCount`
+            let dots = '.'.repeat(dotCount);
+            suspicionDisplay.textContent = `Skóre podezření: ${suspicionScore}${dots}`;
+            
+            // Zvýšíme počet teček pro další cyklus, nebo resetujeme
+            dotCount++;
+            if (dotCount > 3) {
+                dotCount = 0;
+            }
+        }, 400); // Interval 400ms je ideální pro plynulou animaci teček
+
     </script>
 </body>
 </html>
