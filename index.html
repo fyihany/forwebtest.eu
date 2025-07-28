@@ -90,37 +90,38 @@
             document.addEventListener('mousemove', handleFirstMove);
         }
 
-        // --- Kontrola navigator.webdriver ---
+        // --- Kontrola navigator.webdriver a případného přepsání ---
         function checkWebdriver() {
-    const webdriverInfoElement = document.getElementById('webdriver-info').querySelector('span');
+            const webdriverInfoElement = document.getElementById('webdriver-info').querySelector('span');
 
-    const descProto = Object.getOwnPropertyDescriptor(Navigator.prototype, 'webdriver');
-    const descInstance = Object.getOwnPropertyDescriptor(window.navigator, 'webdriver');
-    const currentValue = navigator.webdriver;
+            const descProto = Object.getOwnPropertyDescriptor(Navigator.prototype, 'webdriver');
+            const descInstance = Object.getOwnPropertyDescriptor(window.navigator, 'webdriver');
+            const currentValue = navigator.webdriver;
 
-    let status = `Hodnota: ${currentValue}`;
+            let status = `Aktuální hodnota: ${currentValue}`;
+            let tampering = false;
 
-    // 1. Pokud getter není nativní
-    let tampering = false;
-    if (!descProto && descInstance) {
-        status += " | Vlastnost odstraněna z prototypu a přidána ručně na instanci – MASKOVÁNÍ.";
-        tampering = true;
-    } else if (descProto) {
-        const isNativeGetter = descProto.get && descProto.get.toString().includes('[native code]');
-        if (!isNativeGetter) {
-            status += " | Getter na prototypu byl přepsán skriptem – MASKOVÁNÍ.";
-            tampering = true;
+            // Kontrola, jestli byla vlastnost odstraněna z prototypu
+            if (!descProto && descInstance) {
+                status += " | Vlastnost byla odstraněna z prototypu a ručně přidána na instanci.";
+                tampering = true;
+            } else if (descProto) {
+                const isNativeGetter = descProto.get && descProto.get.toString().includes('[native code]');
+                if (!isNativeGetter) {
+                    status += " | Getter na prototypu byl přepsán skriptem.";
+                    tampering = true;
+                }
+            }
+
+            // Pokud je hodnota false a detekujeme zásah
+            if (currentValue === false && tampering) {
+                status += " | Původní hodnota pravděpodobně byla true a někdo ji přepsal na false.";
+            } else if (!tampering) {
+                status += " | Hodnota je původní (bez úprav).";
+            }
+
+            webdriverInfoElement.textContent = status;
         }
-    }
-
-    // 2. Hodnota false + známky zásahu
-    if (currentValue === false && tampering) {
-        status += " | Podezření: původně true, přepsáno na false.";
-    }
-
-    webdriverInfoElement.textContent = status;
-}
-
 
         window.onload = () => {
             getReferrer();
