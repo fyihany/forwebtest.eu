@@ -1,306 +1,115 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Super E-shop</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <style>
-    /* MODERNÍ VZHLED V ODSTÍNECH ŠEDÉ */
-    :root {
-      --color-dark: #212529;
-      --color-medium: #6c757d;
-      --color-light: #f8f9fa;
-      --color-border: #dee2e6;
-      --color-surface: #ffffff;
-      --color-text: #212529;
-      --radius: 6px;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --spacing: 1rem;
-      --transition: 0.2s ease-in-out;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: var(--color-light);
-      color: var(--color-text);
-      line-height: 1.6;
-    }
-    main { padding: var(--spacing); max-width: 1200px; margin: auto; }
-    header, footer {
-      background-color: var(--color-dark);
-      color: var(--color-light);
-      padding: var(--spacing);
-      text-align: center;
-    }
-    h1, h2, h3 { font-weight: 500; }
-    h2 { margin-bottom: 1rem; }
-    button {
-      font-family: inherit;
-      font-size: 1rem;
-      font-weight: 500;
-      padding: 0.7rem 1.5rem;
-      border: 1px solid transparent;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    button.primary {
-      background-color: var(--color-dark);
-      color: var(--color-surface);
-    }
-    button.primary:hover {
-      background-color: #000;
-    }
-    button.secondary {
-      background-color: var(--color-surface);
-      color: var(--color-dark);
-      border-color: var(--color-border);
-    }
-    button.secondary:hover {
-      background-color: var(--color-light);
-    }
-    .stepper {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: calc(var(--spacing) * 1.5);
-    }
-    .stepper .step {
-      flex: 1;
-      position: relative;
-      text-align: center;
-      color: var(--color-medium);
-    }
-    .stepper .step .circle {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: var(--color-surface);
-      border: 2px solid var(--color-border);
-      color: var(--color-medium);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-      transition: var(--transition);
-    }
-    .stepper .step::after {
-      content: '';
-      position: absolute;
-      top: 16px;
-      left: 50%;
-      width: 100%;
-      height: 2px;
-      background-color: var(--color-border);
-      z-index: -1;
-    }
-    .stepper .step:last-child::after { display: none; }
-    .stepper .step.active .circle {
-      background-color: var(--color-dark);
-      border-color: var(--color-dark);
-      color: var(--color-surface);
-    }
-    .stepper .step.active { color: var(--color-dark); font-weight: 500; }
-    .card {
-      background: var(--color-surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: calc(var(--spacing) * 1.5);
-      border: 1px solid var(--color-border);
-    }
-    .grid { display: grid; gap: var(--spacing); }
-    .products .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-    .product.card { padding: 0; overflow: hidden; }
-    .product img {
-      width: 100%;
-      display: block;
-      border-bottom: 1px solid var(--color-border);
-    }
-    .product .info { padding: var(--spacing); }
-    .product p { margin-bottom: var(--spacing); color: var(--color-medium); }
-    .cart table { width: 100%; border-collapse: collapse; margin-bottom: var(--spacing); }
-    .cart th, .cart td {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--color-border);
-      text-align: left;
-    }
-    .cart th { color: var(--color-medium); font-weight: 500; }
-    .checkout form { display: grid; grid-template-columns: 1fr; gap: var(--spacing); }
-    .checkout label { font-weight: 500; margin-bottom: -0.5rem; }
-    .checkout input {
-      font-size: 1rem;
-      padding: 0.75rem;
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius);
-      transition: var(--transition);
-    }
-    .checkout input:focus {
-      outline: none;
-      border-color: var(--color-dark);
-      box-shadow: 0 0 0 3px rgba(33, 37, 41, 0.1);
-    }
-    #cornerIcon { position: fixed; top: var(--spacing); right: var(--spacing); font-size: 2.5rem; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analýza Referreru a Pozice Myši</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 2em;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #555;
+            font-size: 1.2em;
+        }
+        span {
+            font-weight: bold;
+            color: #007BFF;
+        }
+    </style>
 </head>
 <body>
-  <header><h1>Super E-shop</h1></header>
-  <main>
-    <div class="card" style="margin-bottom: var(--spacing);">
-      <h2 id="referrer-display" style="font-size: 1.2rem; margin-bottom: 0.5rem;">Načítám URL...</h2>
-      <p id="mouse-coords-display" style="text-transform: uppercase; font-weight: bold; color: var(--color-medium);">Sleduji pozici myši...</p>
-    </div>
-    
-        <div class="stepper">
-      <div class="step active"><div class="circle">1</div><div>Produkty</div></div>
-      <div class="step"><div class="circle">2</div><div>Košík</div></div>
-      <div class="step"><div class="circle">3</div><div>Objednávka</div></div>
-    </div>
-        <section id="step-products" class="products card">
-      <h2>Naše produkty</h2>
-      <div class="grid products">
-        <div class="product card">
-          <img src="https://via.placeholder.com/300x200?text=Produkt+1" alt="Produkt 1">
-          <div class="info">
-            <h3>Produkt 1</h3>
-            <p>Skvělý výrobek za výhodnou cenu.</p>
-            <button class="primary" data-id="1" data-name="Produkt 1" data-price="499">Přidat do košíku</button>
-          </div>
-        </div>
-        <div class="product card">
-          <img src="https://via.placeholder.com/300x200?text=Produkt+2" alt="Produkt 2">
-          <div class="info">
-            <h3>Produkt 2</h3>
-            <p>Vysoká kvalita a spolehlivost.</p>
-            <button class="primary" data-id="2" data-name="Produkt 2" data-price="1299">Přidat do košíku</button>
-          </div>
-        </div>
-      </div>
-      <div style="text-align:right; margin-top: var(--spacing);">
-        <button class="primary" id="to-cart">Přejít do košíku</button>
-      </div>
-    </section>
-        <section id="step-cart" class="cart card" style="display:none;">
-      <h2>Váš košík</h2>
-      <table>
-        <thead><tr><th>Produkt</th><th>Cena</th><th>Množství</th><th>Akce</th></tr></thead>
-        <tbody id="cart-body"></tbody>
-      </table>
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <strong style="font-size: 1.2rem;">Celkem: <span id="cart-total">0</span> Kč</strong>
-        <div>
-          <button class="secondary" id="back-to-products">Zpět na produkty</button>
-          <button class="primary" id="to-checkout">Pokračovat</button>
-        </div>
-      </div>
-    </section>
-        <section id="step-checkout" class="checkout card" style="display:none;">
-      <h2>Objednávka</h2>
-      <form id="checkout-form">
-        <label for="name">Jméno a příjmení</label>
-        <input type="text" id="name" required>
-        <label for="email">E-mail</label>
-        <input type="email" id="email" required>
-        <label for="address">Adresa</label>
-        <input type="text" id="address" required>
-        <div style="display:flex; justify-content:space-between; margin-top: 1rem;">
-          <button class="secondary" type="button" id="back-to-cart">Zpět</button>
-          <button class="primary" type="submit">Dokončit objednávku</button>
-        </div>
-      </form>
-    </section>
-        <div id="cornerIcon">⌛</div>
-  </main>
-  <footer>&copy; 2025 Super E-shop</footer>
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // ---- Získání URL a pozice myši ----
-    const referrerDisplay = document.getElementById('referrer-display');
-    const mouseCoordsDisplay = document.getElementById('mouse-coords-display');
-    
-    // Zobrazí URL stránky (dříve referrer) pomocí .name
-    const navEntries = performance.getEntriesByType('navigation');
-    if (navEntries.length > 0) {
-      referrerDisplay.textContent = `URL stránky: ${navEntries[0].name}`;
-    } else {
-      referrerDisplay.textContent = 'URL stránky: Nelze zjistit';
-    }
+    <h1>Informace o příchodu na stránku</h1>
+    <h2 id="referrer-info">Referrer: <span>Načítání...</span></h2>
+    <h2 id="mouse-position-info">Počáteční pozice myši: <span>Čekání na pohyb...</span></h2>
 
-    // Zjistí a zobrazí souřadnice prvního pohybu myši
-    window.addEventListener('mousemove', (e) => {
-      mouseCoordsDisplay.textContent = `POČÁTEČNÍ POZICE MYŠI: X=${e.clientX}, Y=${e.clientY}`;
-    }, { once: true });
+    <script>
+        // --- Zjištění Referreru pomocí Performance API ---
+        function getReferrer() {
+            const referrerInfoElement = document.getElementById('referrer-info').querySelector('span');
 
-    // ---- Původní kód e-shopu ----
-    const cart = {};
-    const cartBody = document.getElementById('cart-body');
-    const cartTotalEl = document.getElementById('cart-total');
-    document.querySelectorAll('.product button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.id;
-        cart[id] = cart[id] || { name: btn.dataset.name, price: +btn.dataset.price, qty: 0 };
-        cart[id].qty++;
-        renderCart();
-      });
-    });
-    function renderCart() {
-      cartBody.innerHTML = '';
-      let total = 0;
-      for (const id in cart) {
-        const item = cart[id];
-        total += item.price * item.qty;
-        cartBody.innerHTML += `<tr><td>${item.name}</td><td>${item.price} Kč</td><td>${item.qty}</td><td><button class='secondary remove' data-id='${id}'>×</button></td></tr>`;
-      }
-      cartTotalEl.textContent = total;
-      document.querySelectorAll('.remove').forEach(b => b.addEventListener('click', () => {
-        delete cart[b.dataset.id];
-        renderCart();
-      }));
-    }
-    // Navigation
-    document.getElementById('to-cart').onclick = () => switchStep(2);
-    document.getElementById('back-to-products').onclick = () => switchStep(1);
-    document.getElementById('to-checkout').onclick = () => switchStep(3);
-    document.getElementById('back-to-cart').onclick = () => switchStep(2);
-    document.getElementById('checkout-form').onsubmit = e => { e.preventDefault(); alert('Děkujeme za objednávku!'); location.reload(); };
-    function switchStep(step) {
-      const steps = ['step-products','step-cart','step-checkout'];
-      steps.forEach((id,i) => {
-        document.getElementById(id).style.display = (i+1===step?'block':'none');
-        document.querySelectorAll('.stepper .step')[i].classList.toggle('active', i+1===step);
-      });
-    }
-    // Advanced mouse detection
-    const MAX_SAMPLES = 300, BASE_INTERVAL = 30, DWELL_THRESH = 100, HIST_BINS = 8;
-    const VAR_THRESH=800, ANGLE_THRESH=0.7, JERK_THRESH=1000, ENTROPY_THRESH=1.5;
-    let samples=[], lastTime=Date.now(), lastSpeed=null;
-    const cornerIcon=document.getElementById('cornerIcon');
-    function getInterval() { return BASE_INTERVAL + (Math.random()*20 - 10); }
-    function computeFeatures(data) {
-      let speeds=[], angles=[], jerks=[]; let dwell=false;
-      for(let i=1;i<data.length;i++){ const dx=data[i].x-data[i-1].x, dy=data[i].y-data[i-1].y, dt=data[i].t-data[i-1].t;
-        const speed=Math.hypot(dx,dy)/(dt/1000||1e-6); speeds.push(speed);
-        const angle=Math.atan2(dy,dx); angles.push(angle);
-        if(lastSpeed!==null){ jerks.push(Math.abs(speed-lastSpeed)/(dt/1000)); }
-        lastSpeed=speed;
-        if(dt>DWELL_THRESH)dwell=true;
-      }
-      const meanSpeed=speeds.reduce((a,b)=>a+b,0)/speeds.length;
-      const varSpeed=speeds.reduce((a,b)=>a+Math.pow(b-meanSpeed,2),0)/speeds.length;
-      const diffs=[]; for(let i=1;i<angles.length;i++){ let d=Math.abs(angles[i]-angles[i-1]); if(d>Math.PI)d=2*Math.PI-d; diffs.push(d);}      
-      const meanAngleChange=diffs.length ? diffs.reduce((a,b)=>a+b,0)/diffs.length : 0;
-      const meanJerk=jerks.length ? jerks.reduce((a,b)=>a+b,0)/jerks.length : 0;
-      const bins=Array(HIST_BINS).fill(0);
-      angles.forEach(a=>{ let idx=Math.floor(((a+Math.PI)/(2*Math.PI))*HIST_BINS); if(idx>=HIST_BINS)idx=HIST_BINS-1; bins[idx]++; });
-      let entropy=0; bins.forEach(c=>{ if(c>0){ const p=c/angles.length; entropy-=p*Math.log2(p); }});
-      return { varSpeed, meanAngleChange, meanJerk, hasDwell:dwell, angleEntropy:entropy };
-    }
-    function classify(f){ const ok=[f.varSpeed>VAR_THRESH, f.meanAngleChange>ANGLE_THRESH, f.meanJerk>JERK_THRESH, f.hasDwell, f.angleEntropy>ENTROPY_THRESH].filter(x=>x).length; return ok>=4;}    
-    function updateDetection(){ if(samples.length<5)return; const f=computeFeatures(samples); cornerIcon.textContent=classify(f)?'🖐️':'🤖'; }
-    const mouseMoveHandler = e => { const now=Date.now(); if(now-lastTime>getInterval()){ samples.push({x:e.clientX,y:e.clientY,t:now}); lastTime=now; if(samples.length>MAX_SAMPLES)samples.shift(); updateDetection(); }};
-    window.addEventListener('mousemove', mouseMoveHandler);
-    window.addEventListener('load',()=>{ setTimeout(updateDetection,1000); });
-  });
-  </script>
+            // Zkontrolujeme, jestli prohlížeč podporuje Performance API
+            if (window.performance && window.performance.getEntriesByType) {
+                // Získáme navigační data
+                const navigationEntries = window.performance.getEntriesByType("navigation");
+                if (navigationEntries.length > 0) {
+                    // Referrer je v prvním (a jediném) záznamu
+                    const referrer = navigationEntries[0].referrer;
+                    if (referrer) {
+                        referrerInfoElement.textContent = referrer;
+                    } else {
+                        referrerInfoElement.textContent = "Přímý přístup (žádný referrer)";
+                    }
+                } else {
+                     referrerInfoElement.textContent = "Data navigace nejsou k dispozici.";
+                }
+            } else {
+                // Fallback na document.referrer pro starší prohlížeče
+                referrerInfoElement.textContent = document.referrer || "Přímý přístup (žádný referrer)";
+            }
+        }
+
+        // --- Zjištění úvodní pozice myši ---
+        function getInitialMousePosition() {
+            const mousePositionInfoElement = document.getElementById('mouse-position-info').querySelector('span');
+
+            // Funkce, která se spustí při prvním pohybu myši
+            const handleFirstMove = (event) => {
+                const x = event.clientX;
+                const y = event.clientY;
+
+                // Rozměry viditelné části okna (viewportu)
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+
+                let positionDescription = `X: ${x}, Y: ${y}`;
+                const tolerance = 50; // Tolerance v pixelech pro rohy a střed
+
+                // Analýza pozice
+                if (y < tolerance) { // Horní hrana
+                    if (x < tolerance) {
+                        positionDescription = "Levý horní roh";
+                    } else if (x > vw - tolerance) {
+                        positionDescription = "Pravý horní roh";
+                    } else {
+                        positionDescription = "U horní hrany";
+                    }
+                } else if (y > vh - tolerance) { // Dolní hrana
+                     if (x < tolerance) {
+                        positionDescription = "Levý dolní roh";
+                    } else if (x > vw - tolerance) {
+                        positionDescription = "Pravý dolní roh";
+                    } else {
+                        positionDescription = "U dolní hrany";
+                    }
+                } else if (Math.abs(x - vw / 2) < tolerance && Math.abs(y - vh / 2) < tolerance) { // Střed
+                    positionDescription = "Uprostřed stránky";
+                } else if (x < tolerance){
+                    positionDescription = "U levé hrany";
+                } else if (x > vw - tolerance){
+                    positionDescription = "U pravé hrany";
+                }
+
+                mousePositionInfoElement.textContent = positionDescription;
+
+                // Odebereme posluchač události, aby se pozice už dále neaktualizovala
+                document.removeEventListener('mousemove', handleFirstMove);
+            };
+
+            // Přidáme posluchač pro událost 'mousemove'
+            document.addEventListener('mousemove', handleFirstMove);
+        }
+
+
+        // Spustíme obě funkce po načtení stránky
+        window.onload = () => {
+            getReferrer();
+            getInitialMousePosition();
+        };
+    </script>
 </body>
 </html>
